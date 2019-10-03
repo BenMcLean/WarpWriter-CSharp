@@ -42,12 +42,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GodotSharp">
-      <HintPath>$(ProjectDir)\.mono\assemblies\$(ApiConfiguration)\GodotSharp.dll</HintPath>
       <Private>False</Private>
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharp.dll</HintPath>
     </Reference>
     <Reference Include="GodotSharpEditor" Condition=" '$(Configuration)' == 'Tools' ">
-      <HintPath>$(ProjectDir)\.mono\assemblies\$(ApiConfiguration)\GodotSharpEditor.dll</HintPath>
       <Private>False</Private>
+      <HintPath>$(ProjectDir)/.mono/assemblies/$(ApiConfiguration)/GodotSharpEditor.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -58,6 +58,7 @@
     <Compile Include="View\Color\FlatVoxelColor.cs" />
     <Compile Include="View\Color\IVoxelColor.cs" />
     <Compile Include="View\PixelCubeDraw.cs" />
+    <Compile Include="View\Render\ByteArrayRenderer.cs" />
     <Compile Include="View\Render\IRectangleRenderer.cs" />
     <Compile Include="View\Render\ITriangleRenderer.cs" />
     <Compile Include="View\Render\IVoxelRenderer.cs" />
