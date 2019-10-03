@@ -1,6 +1,6 @@
 ﻿namespace WarpWriter.View.Render
 {
-    interface ITriangleRenderer<T> : IVoxelRenderer<T> where T : ITriangleRenderer<T>
+    public interface ITriangleRenderer<T> : IVoxelRenderer<T> where T : ITriangleRenderer<T>
     {
         /// <summary>
         /// Draws a triangle 3 high and 2 wide pointing left

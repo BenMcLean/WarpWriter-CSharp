@@ -4,7 +4,7 @@ using WarpWriter.View.Render;
 
 namespace WarpWriter.View
 {
-    class PixelCubeDraw
+    public class PixelCubeDraw
     {
         public static void Draw<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
