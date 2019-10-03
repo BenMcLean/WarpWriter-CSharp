@@ -6,11 +6,13 @@ namespace WarpWriter.View.Render
     public class ByteArrayRenderer : IRectangleRenderer<ByteArrayRenderer>, ITriangleRenderer<ByteArrayRenderer>
     {
         public byte Transparency { get; set; } = 255;
-        public IVoxelColor VoxelColor { get; set; }
+        public IVoxelColor Color { get; set; }
         public bool FlipX { get; set; } = false;
         public bool FlipY { get; set; } = false;
         public int ScaleX { get; set; } = 1;
         public int ScaleY { get; set; } = 1;
+        public int OffsetX { get; set; } = 0;
+        public int OffsetY { get; set; } = 0;
         public byte[] Bytes { get; set; }
         public uint Width { get; set; } = 0;
         public uint Height
@@ -42,9 +44,12 @@ namespace WarpWriter.View.Render
         #region IRectangleRenderer
         public ByteArrayRenderer Rect(int x, int y, int sizeX, int sizeY, uint color)
         {
-            x *= ScaleX; y *= ScaleY;
-            int x2 = (x + sizeX) * ScaleX, y2 = (y + sizeY) * ScaleY, startX, startY, endX, endY;
-            if (x < x2)
+            x = ScaleX * (FlipX ? -x : x) + OffsetX;
+            y = ScaleY * (FlipY ? -y : y) + OffsetY;
+            int x2 = x + sizeX * ScaleX,
+                y2 = y + sizeY * ScaleY,
+                startX, startY, endX, endY;
+            if (x <= x2)
             {
                 startX = x; endX = x2;
             }
@@ -52,7 +57,7 @@ namespace WarpWriter.View.Render
             {
                 startX = x2; endX = x;
             }
-            if (y < y2)
+            if (y <= y2)
             {
                 startY = y; endY = y2;
             }
@@ -68,7 +73,11 @@ namespace WarpWriter.View.Render
 
         public ByteArrayRenderer RectLeft(int x, int y, int sizeX, int sizeY, byte voxel)
         {
-            throw new NotImplementedException();
+            return Rect(x, y, sizeX, sizeY,
+                    FlipX ?
+                            Color.RightFace(voxel)
+                            : Color.LeftFace(voxel)
+            );
         }
 
         public ByteArrayRenderer RectLeft(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
@@ -78,7 +87,11 @@ namespace WarpWriter.View.Render
 
         public ByteArrayRenderer RectRight(int x, int y, int sizeX, int sizeY, byte voxel)
         {
-            throw new NotImplementedException();
+            return Rect(x, y, sizeX, sizeY,
+                    FlipX ?
+                            Color.LeftFace(voxel)
+                            : Color.RightFace(voxel)
+            );
         }
 
         public ByteArrayRenderer RectRight(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
@@ -88,7 +101,7 @@ namespace WarpWriter.View.Render
 
         public ByteArrayRenderer RectVertical(int x, int y, int sizeX, int sizeY, byte voxel)
         {
-            throw new NotImplementedException();
+            return Rect(x, y, sizeX, sizeY, Color.VerticalFace(voxel));
         }
 
         public ByteArrayRenderer RectVertical(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
