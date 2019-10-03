@@ -3,7 +3,7 @@
     /// <summary>
     /// An IRectangleRenderer understands how to draw rectangles representing the three visible faces of a voxel cube.
     /// </summary>
-    interface IRectangleRenderer<T> : IVoxelRenderer<T>
+    interface IRectangleRenderer<T> : IVoxelRenderer<T> where T : IRectangleRenderer<T>
     {
         T Rect(int x, int y, int sizeX, int sizeY, uint color);
 

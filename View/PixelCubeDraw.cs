@@ -6,17 +6,17 @@ namespace WarpWriter.View
 {
     class PixelCubeDraw
     {
-        public static void Draw<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void Draw<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             DrawRight(model, renderer);
         }
 
-        public static void DrawRight<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void DrawRight<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             DrawRight(model, renderer, 6, 6);
         }
 
-        public static void DrawRight<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void DrawRight<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
             for (int z = 0; z < sizeZ; z++)
@@ -36,12 +36,12 @@ namespace WarpWriter.View
             }
         }
 
-        public static void DrawRightPeek<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void DrawRightPeek<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             DrawRightPeek(model, renderer, 6, 6);
         }
 
-        public static void DrawRightPeek<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void DrawRightPeek<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
             for (int z = 0; z < sizeZ; z++)
@@ -63,12 +63,12 @@ namespace WarpWriter.View
             }
         }
 
-        public static void DrawLeft<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void DrawLeft<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             DrawLeft(model, renderer, 6, 6);
         }
 
-        public static void DrawLeft<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void DrawLeft<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
             for (int z = 0; z < sizeZ; z++)
@@ -88,12 +88,12 @@ namespace WarpWriter.View
             }
         }
 
-        public static void DrawTop<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void DrawTop<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             DrawTop(model, renderer, 6, 6);
         }
 
-        public static void DrawTop<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void DrawTop<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
             for (int y = 0; y < sizeY; y++)
@@ -113,12 +113,12 @@ namespace WarpWriter.View
             }
         }
 
-        public static void DrawBottom<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void DrawBottom<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             DrawBottom(model, renderer, 6, 6);
         }
 
-        public static void DrawBottom<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void DrawBottom<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
             for (int y = 0; y < sizeY; y++)
@@ -138,12 +138,12 @@ namespace WarpWriter.View
             }
         }
 
-        public static void Draw45<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void Draw45<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             Draw45(model, renderer, 6, 6);
         }
 
-        public static void Draw45<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void Draw45<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             byte v;
             int sizeX = (int)model.SizeX(),
@@ -194,12 +194,12 @@ namespace WarpWriter.View
             }
         }
 
-        public static void Draw45Peek<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void Draw45Peek<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             Draw45Peek(model, renderer, 4, 6);
         }
 
-        public static void Draw45Peek<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void Draw45Peek<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             byte v;
             int sizeX = (int)model.SizeX(),
@@ -263,12 +263,12 @@ namespace WarpWriter.View
             }
         }
 
-        public static void DrawAbove<T>(IModel model, IRectangleRenderer<T> renderer)
+        public static void DrawAbove<T>(IModel model, IRectangleRenderer<T> renderer) where T : IRectangleRenderer<T>
         {
             DrawAbove(model, renderer, 6, 2);
         }
 
-        public static void DrawAbove<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY)
+        public static void DrawAbove<T>(IModel model, IRectangleRenderer<T> renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             int sizeX = (int)model.SizeX(),
                     sizeY = (int)model.SizeY(),
@@ -340,7 +340,7 @@ namespace WarpWriter.View
             //- ((sizeVX + sizeVY & 1) << 2); // if sizeVX + sizeVY is odd, this is 4, otherwise it is 0
         }
 
-        public static void DrawIso<T>(IModel model, ITriangleRenderer<T> renderer)
+        public static void DrawIso<T>(IModel model, ITriangleRenderer<T> renderer) where T : ITriangleRenderer<T>
         {
             byte v;
             int sizeVX = (int)model.SizeX(), sizeVY = (int)model.SizeY(), sizeVZ = (int)model.SizeZ(),
