@@ -1,4 +1,4 @@
-﻿namespace WarpWriter.Model
+﻿namespace WarpWriter.Model.Fetch
 {
     public interface IModel : IFetch
     {

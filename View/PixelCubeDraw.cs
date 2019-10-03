@@ -1,5 +1,5 @@
 ﻿using System;
-using WarpWriter.Model;
+using WarpWriter.Model.Fetch;
 using WarpWriter.View.Render;
 
 namespace WarpWriter.View
