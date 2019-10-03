@@ -1,13 +1,69 @@
 ﻿using System;
+using WarpWriter.View.Color;
 
 namespace WarpWriter.View.Render
 {
     public class ByteArrayRenderer : IRectangleRenderer<ByteArrayRenderer>, ITriangleRenderer<ByteArrayRenderer>
     {
+        public byte Transparency { get; set; } = 255;
+        public IVoxelColor VoxelColor { get; set; }
+        public bool FlipX { get; set; } = false;
+        public bool FlipY { get; set; } = false;
+        public int ScaleX { get; set; } = 1;
+        public int ScaleY { get; set; } = 1;
+        public byte[] Bytes { get; set; }
+        public uint Width { get; set; } = 0;
+        public uint Height
+        {
+            get
+            {
+                return Bytes == null ? 0 : (uint)Bytes.Length / (Width * 4);
+            }
+            set
+            {
+                if (value != Height)
+                    Bytes = new byte[Width * value * 4];
+            }
+        }
+
+        public ByteArrayRenderer DrawPixel(int x, int y, uint color)
+        {
+            if (x >= 0 && x < Width && y >= 0 && y < Height)
+            {
+                uint start = (uint)(y * Width + x) * 4;
+                Bytes[start] = (byte)(color >> 24);
+                Bytes[start + 1] = (byte)(color >> 16);
+                Bytes[start + 2] = (byte)(color >> 8);
+                Bytes[start + 3] = Transparency;
+            }
+            return this;
+        }
+
         #region IRectangleRenderer
         public ByteArrayRenderer Rect(int x, int y, int sizeX, int sizeY, uint color)
         {
-            throw new NotImplementedException();
+            x *= ScaleX; y *= ScaleY;
+            int x2 = (x + sizeX) * ScaleX, y2 = (y + sizeY) * ScaleY, startX, startY, endX, endY;
+            if (x < x2)
+            {
+                startX = x; endX = x2;
+            }
+            else
+            {
+                startX = x2; endX = x;
+            }
+            if (y < y2)
+            {
+                startY = y; endY = y2;
+            }
+            else
+            {
+                startY = y2; endY = y;
+            }
+            for (x = startX; x < endX; x++)
+                for (y = startY; y < endY; y++)
+                    DrawPixel(x, y, color);
+            return this;
         }
 
         public ByteArrayRenderer RectLeft(int x, int y, int sizeX, int sizeY, byte voxel)
@@ -108,18 +164,6 @@ namespace WarpWriter.View.Render
         }
 
         public ByteArrayRenderer DrawRightTriangleVerticalFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
-
-        #region IVoxelRenderer
-        public ByteArrayRenderer SetTransparency(byte transparency)
-        {
-            throw new NotImplementedException();
-        }
-
-        public byte Transparency()
         {
             throw new NotImplementedException();
         }

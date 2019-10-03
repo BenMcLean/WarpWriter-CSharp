@@ -1,11 +1,10 @@
 ﻿namespace WarpWriter.View.Render
 {
-    public interface IVoxelRenderer<T> where T : IVoxelRenderer<T>
+    public interface IVoxelRenderer
     {
-        /// <param name="transparency">Anything from 0 for fully transparency to 255 for fully opaque.</param>
-        /// <returns>this</returns>
-        T SetTransparency(byte transparency);
-
-        byte Transparency();
+        /// <summary>
+        /// Anything from 0 for fully transparent to 255 for fully opaque.
+        /// </summary>
+        byte Transparency { get; set; }
     }
 }
