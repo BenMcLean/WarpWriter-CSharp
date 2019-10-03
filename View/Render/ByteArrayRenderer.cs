@@ -82,7 +82,11 @@ namespace WarpWriter.View.Render
 
         public ByteArrayRenderer RectLeft(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return RectLeft(px, py, sizeX, sizeY, voxel);
+            return Rect(px, py, sizeX, sizeY,
+                FlipX ?
+                    Color.RightFace(voxel, vx, vy, vz)
+                    : Color.LeftFace(voxel, vx, vy, vz)
+            );
         }
 
         public ByteArrayRenderer RectRight(int x, int y, int sizeX, int sizeY, byte voxel)
@@ -96,7 +100,11 @@ namespace WarpWriter.View.Render
 
         public ByteArrayRenderer RectRight(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return RectRight(px, py, sizeX, sizeY, voxel);
+            return Rect(px, py, sizeX, sizeY,
+                FlipX ?
+                    Color.LeftFace(voxel, vx, vy, vz)
+                    : Color.RightFace(voxel, vx, vy, vz)
+            );
         }
 
         public ByteArrayRenderer RectVertical(int x, int y, int sizeX, int sizeY, byte voxel)
@@ -106,7 +114,7 @@ namespace WarpWriter.View.Render
 
         public ByteArrayRenderer RectVertical(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return RectVertical(px, py, sizeX, sizeY, voxel);
+            return Rect(px, py, sizeX, sizeY, Color.VerticalFace(voxel, vx, vy, vz));
         }
         #endregion
 
