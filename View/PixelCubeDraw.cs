@@ -36,7 +36,7 @@ namespace WarpWriter.View
 
         public static void DrawRight<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
+            uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int z = 0; z < sizeZ; z++)
             {
                 for (int y = 0; y < sizeY; y++)
@@ -73,7 +73,7 @@ namespace WarpWriter.View
 
         public static void DrawRightPeek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
+            uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int z = 0; z < sizeZ; z++)
             {
                 for (int y = 0; y < sizeY; y++)
@@ -112,7 +112,7 @@ namespace WarpWriter.View
 
         public static void DrawLeft<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
+            uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int z = 0; z < sizeZ; z++)
             {
                 for (int y = 0; y < sizeY; y++)
@@ -149,7 +149,7 @@ namespace WarpWriter.View
 
         public static void DrawTop<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
+            uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int y = 0; y < sizeY; y++)
             {
                 for (int x = 0; x < sizeX; x++)
@@ -186,7 +186,7 @@ namespace WarpWriter.View
 
         public static void DrawBottom<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            uint sizeX = model.SizeX(), sizeY = model.SizeY(), sizeZ = model.SizeZ();
+            uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int y = 0; y < sizeY; y++)
             {
                 for (int x = 0; x < sizeX; x++)
@@ -224,9 +224,9 @@ namespace WarpWriter.View
         public static void Draw45<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             byte v;
-            int sizeX = (int)model.SizeX(),
-                    sizeY = (int)model.SizeY(),
-                    sizeZ = (int)model.SizeZ(),
+            int sizeX = (int)model.SizeX,
+                    sizeY = (int)model.SizeY,
+                    sizeZ = (int)model.SizeZ,
                     pixelWidth = sizeX + sizeY;
             for (int py = 0; py < sizeZ; py++)
             { // pixel y
@@ -292,9 +292,9 @@ namespace WarpWriter.View
         public static void Draw45Peek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             byte v;
-            int sizeX = (int)model.SizeX(),
-                    sizeY = (int)model.SizeY(),
-                    sizeZ = (int)model.SizeZ(),
+            int sizeX = (int)model.SizeX,
+                    sizeY = (int)model.SizeY,
+                    sizeZ = (int)model.SizeZ,
                     pixelWidth = sizeX + sizeY;
             for (int py = 0; py < sizeZ; py++)
             { // pixel y
@@ -372,9 +372,9 @@ namespace WarpWriter.View
 
         public static void DrawAbove<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            int sizeX = (int)model.SizeX(),
-                    sizeY = (int)model.SizeY(),
-                    sizeZ = (int)model.SizeZ(),
+            int sizeX = (int)model.SizeX,
+                    sizeY = (int)model.SizeY,
+                    sizeZ = (int)model.SizeZ,
                     pixelHeight = (sizeX + sizeZ) * 2;
             for (int vy = 0; vy < sizeY; vy++)
             { // voxel y is pixel x
@@ -426,8 +426,8 @@ namespace WarpWriter.View
 
         public static uint IsoHeight(IModel model)
         {
-            return (model.SizeZ() +
-                    Max(model.SizeX(), model.SizeY())
+            return (model.SizeZ +
+                    Max(model.SizeX, model.SizeY)
                     ) * 4;
         }
 
@@ -438,7 +438,7 @@ namespace WarpWriter.View
 
         public static uint IsoWidth(IModel model)
         {
-            return (model.SizeX() + model.SizeY()) * 2;
+            return (model.SizeX + model.SizeY) * 2;
             //- ((sizeVX + sizeVY & 1) << 2); // if sizeVX + sizeVY is odd, this is 4, otherwise it is 0
         }
 
@@ -451,7 +451,7 @@ namespace WarpWriter.View
         public static void DrawIso<T>(IModel model, T renderer) where T : ITriangleRenderer<T>
         {
             byte v;
-            int sizeVX = (int)model.SizeX(), sizeVY = (int)model.SizeY(), sizeVZ = (int)model.SizeZ(),
+            int sizeVX = (int)model.SizeX, sizeVY = (int)model.SizeY, sizeVZ = (int)model.SizeZ,
                     sizeVX2 = sizeVX * 2, sizeVY2 = sizeVY * 2,
                     pixelWidth = (int)IsoWidth(model);
             // To move one x+ in voxels is x + 2, y - 2 in pixels.
