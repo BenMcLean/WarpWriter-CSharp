@@ -4,16 +4,34 @@ using WarpWriter.View.Render;
 
 namespace WarpWriter.View
 {
-    public class PixelCubeDraw
+    public static class PixelCubeDraw
     {
+        public static T Draw<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            Draw(model, renderer);
+            return renderer;
+        }
+
         public static void Draw<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             DrawRight(model, renderer);
         }
 
+        public static T DrawRight<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            DrawRight(model, renderer);
+            return renderer;
+        }
+
         public static void DrawRight<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             DrawRight(model, renderer, 6, 6);
+        }
+
+        public static T DrawRight<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            DrawRight(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void DrawRight<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -36,9 +54,21 @@ namespace WarpWriter.View
             }
         }
 
+        public static T DrawRightPeek<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            DrawRightPeek(model, renderer);
+            return renderer;
+        }
+
         public static void DrawRightPeek<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             DrawRightPeek(model, renderer, 6, 6);
+        }
+
+        public static T DrawRightPeek<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            DrawRightPeek(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void DrawRightPeek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -63,9 +93,21 @@ namespace WarpWriter.View
             }
         }
 
+        public static T DrawLeft<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            DrawLeft(model, renderer);
+            return renderer;
+        }
+
         public static void DrawLeft<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             DrawLeft(model, renderer, 6, 6);
+        }
+
+        public static T DrawLeft<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            DrawLeft(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void DrawLeft<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -88,9 +130,21 @@ namespace WarpWriter.View
             }
         }
 
+        public static T DrawTop<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            DrawTop(model, renderer);
+            return renderer;
+        }
+
         public static void DrawTop<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             DrawTop(model, renderer, 6, 6);
+        }
+
+        public static T DrawTop<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            DrawTop(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void DrawTop<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -113,9 +167,21 @@ namespace WarpWriter.View
             }
         }
 
+        public static T DrawBottom<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            DrawBottom(model, renderer);
+            return renderer;
+        }
+
         public static void DrawBottom<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             DrawBottom(model, renderer, 6, 6);
+        }
+
+        public static T DrawBottom<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            DrawBottom(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void DrawBottom<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -138,9 +204,21 @@ namespace WarpWriter.View
             }
         }
 
+        public static T Draw45<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            Draw45(model, renderer);
+            return renderer;
+        }
+
         public static void Draw45<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             Draw45(model, renderer, 6, 6);
+        }
+
+        public static T Draw45<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            Draw45(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void Draw45<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -194,9 +272,21 @@ namespace WarpWriter.View
             }
         }
 
+        public static T Draw45Peek<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            Draw45Peek(model, renderer);
+            return renderer;
+        }
+
         public static void Draw45Peek<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             Draw45Peek(model, renderer, 4, 6);
+        }
+
+        public static T Draw45Peek<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            Draw45Peek(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void Draw45Peek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -263,9 +353,21 @@ namespace WarpWriter.View
             }
         }
 
+        public static T DrawAbove<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        {
+            DrawAbove(model, renderer);
+            return renderer;
+        }
+
         public static void DrawAbove<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
             DrawAbove(model, renderer, 6, 2);
+        }
+
+        public static T DrawAbove<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        {
+            DrawAbove(model, renderer, scaleX, scaleY);
+            return renderer;
         }
 
         public static void DrawAbove<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
@@ -338,6 +440,12 @@ namespace WarpWriter.View
         {
             return (model.SizeX() + model.SizeY()) * 2;
             //- ((sizeVX + sizeVY & 1) << 2); // if sizeVX + sizeVY is odd, this is 4, otherwise it is 0
+        }
+
+        public static T DrawIso<T>(this T renderer, IModel model) where T : ITriangleRenderer<T>
+        {
+            DrawIso(model, renderer);
+            return renderer;
         }
 
         public static void DrawIso<T>(IModel model, T renderer) where T : ITriangleRenderer<T>
