@@ -74,9 +74,9 @@ namespace WarpWriter.View.Render
         public ByteArrayRenderer RectLeft(int x, int y, int sizeX, int sizeY, byte voxel)
         {
             return Rect(x, y, sizeX, sizeY,
-                    FlipX ?
-                            Color.RightFace(voxel)
-                            : Color.LeftFace(voxel)
+                FlipX ?
+                    Color.RightFace(voxel)
+                    : Color.LeftFace(voxel)
             );
         }
 
@@ -88,9 +88,9 @@ namespace WarpWriter.View.Render
         public ByteArrayRenderer RectRight(int x, int y, int sizeX, int sizeY, byte voxel)
         {
             return Rect(x, y, sizeX, sizeY,
-                    FlipX ?
-                            Color.LeftFace(voxel)
-                            : Color.RightFace(voxel)
+                FlipX ?
+                    Color.LeftFace(voxel)
+                    : Color.RightFace(voxel)
             );
         }
 
@@ -113,72 +113,100 @@ namespace WarpWriter.View.Render
         #region ITriangleRenderer
         public ByteArrayRenderer DrawLeftTriangle(int x, int y, uint color)
         {
-            throw new NotImplementedException();
+            return Rect(x + 1, y, 1, 3, color)
+                .Rect(x, y + 1, 1, 1, color);
         }
 
         public ByteArrayRenderer DrawLeftTriangleLeftFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            uint color = FlipX ?
+                Color.RightFace(voxel, vx, vy, vz)
+                : Color.LeftFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawRightTriangle(x, y, color)
+                : DrawLeftTriangle(x, y, color);
         }
 
         public ByteArrayRenderer DrawLeftTriangleLeftFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            return DrawLeftTriangleLeftFace(x, y, voxel, vx, vy, vz);
         }
 
         public ByteArrayRenderer DrawLeftTriangleRightFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            uint color = FlipX ?
+                Color.LeftFace(voxel, vx, vy, vz)
+                : Color.RightFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawRightTriangle(x, y, color)
+                : DrawLeftTriangle(x, y, color);
         }
 
         public ByteArrayRenderer DrawLeftTriangleRightFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            return DrawLeftTriangleRightFace(x, y, voxel, vx, vy, vz);
         }
 
         public ByteArrayRenderer DrawLeftTriangleVerticalFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            uint color = Color.VerticalFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawRightTriangle(x, y, color)
+                : DrawLeftTriangle(x, y, color);
         }
 
         public ByteArrayRenderer DrawLeftTriangleVerticalFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            return DrawLeftTriangleVerticalFace(x, y, voxel, vx, vy, vz);
         }
 
         public ByteArrayRenderer DrawRightTriangle(int x, int y, uint color)
         {
-            throw new NotImplementedException();
+            return Rect(x, y, 1, 3, color)
+                .Rect(x + 1, y + 1, 1, 1, color);
         }
 
         public ByteArrayRenderer DrawRightTriangleLeftFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            uint color = FlipX ?
+                Color.RightFace(voxel, vx, vy, vz)
+                : Color.LeftFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawLeftTriangle(x, y, color)
+                : DrawRightTriangle(x, y, color);
         }
 
         public ByteArrayRenderer DrawRightTriangleLeftFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            return DrawRightTriangleLeftFace(x, y, voxel, vx, vy, vz);
         }
 
         public ByteArrayRenderer DrawRightTriangleRightFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            uint color = FlipX ?
+                Color.LeftFace(voxel, vx, vy, vz)
+                : Color.RightFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawLeftTriangle(x, y, color)
+                : DrawRightTriangle(x, y, color);
         }
 
         public ByteArrayRenderer DrawRightTriangleRightFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            return DrawRightTriangleRightFace(x, y, voxel, vx, vy, vz);
         }
 
         public ByteArrayRenderer DrawRightTriangleVerticalFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            uint color = Color.VerticalFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawLeftTriangle(x, y, color)
+                : DrawRightTriangle(x, y, color);
         }
 
         public ByteArrayRenderer DrawRightTriangleVerticalFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            throw new NotImplementedException();
+            return DrawRightTriangleVerticalFace(x, y, voxel, vx, vy, vz);
         }
         #endregion
     }
