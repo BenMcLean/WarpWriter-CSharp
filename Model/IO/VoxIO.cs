@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WarpWriter.Model.Fetch;
 
 namespace WarpWriter.Model.IO
 {
-    class VoxIO
+    public static class VoxIO
     {
         /// <summary>
         /// MagicaVoxel's default palette; used when no palette is specified.

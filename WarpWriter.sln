@@ -1,12 +1,16 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29326.143
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarpWriter", "WarpWriter.csproj", "{83ECE364-2227-4D3E-A401-F8F13A76D8D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WarpWriterTest", "WarpWriterTest\WarpWriterTest.csproj", "{F1AE8526-6AB0-4DEB-81F2-4EE7DB28C554}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-	Debug|Any CPU = Debug|Any CPU
-	Release|Any CPU = Release|Any CPU
-	Tools|Any CPU = Tools|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Tools|Any CPU = Tools|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{83ECE364-2227-4D3E-A401-F8F13A76D8D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -15,5 +19,17 @@ Global
 		{83ECE364-2227-4D3E-A401-F8F13A76D8D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83ECE364-2227-4D3E-A401-F8F13A76D8D5}.Tools|Any CPU.ActiveCfg = Tools|Any CPU
 		{83ECE364-2227-4D3E-A401-F8F13A76D8D5}.Tools|Any CPU.Build.0 = Tools|Any CPU
+		{F1AE8526-6AB0-4DEB-81F2-4EE7DB28C554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1AE8526-6AB0-4DEB-81F2-4EE7DB28C554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1AE8526-6AB0-4DEB-81F2-4EE7DB28C554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1AE8526-6AB0-4DEB-81F2-4EE7DB28C554}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1AE8526-6AB0-4DEB-81F2-4EE7DB28C554}.Tools|Any CPU.ActiveCfg = Release|Any CPU
+		{F1AE8526-6AB0-4DEB-81F2-4EE7DB28C554}.Tools|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {117DC9F5-35CA-46DD-A97E-ECC6573EB54F}
 	EndGlobalSection
 EndGlobal
