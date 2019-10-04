@@ -4,12 +4,6 @@
     {
         public uint[] Palette { get; set; }
 
-        public FlatVoxelColor SetPalette(uint[] palette)
-        {
-            Palette = palette;
-            return this;
-        }
-
         public uint LeftFace(byte voxel)
         {
             return Palette[voxel];
