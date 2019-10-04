@@ -1,6 +1,6 @@
 ﻿namespace WarpWriter.Model.Decide
 {
-    interface IDecide
+    public interface IDecide
     {
         bool Bool(int x, int y, int z);
     }

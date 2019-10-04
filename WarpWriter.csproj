@@ -53,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Decide\IDecide.cs" />
+    <Compile Include="Model\Fetch\ArrayModel.cs" />
     <Compile Include="Model\Fetch\Fetch.cs" />
     <Compile Include="Model\Fetch\ColorFetch.cs" />
     <Compile Include="Model\Fetch\FetchModel.cs" />
