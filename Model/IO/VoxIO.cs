@@ -8,7 +8,7 @@ using WarpWriter.Model.Fetch;
 
 namespace WarpWriter.Model.IO
 {
-    class VoxIO
+    public static class VoxIO
     {
         /// <summary>
         /// MagicaVoxel's default palette; used when no palette is specified.
@@ -115,9 +115,12 @@ namespace WarpWriter.Model.IO
                         }
                         else bin.ReadBytes(chunkSize);   // read any excess bytes
                     }
-
                 }
-
+            }
+            for(int i = 0; i < 256;i++)
+            {
+                uint u = palette[i];
+                palette[i] = u << 24 | (u << 8 & 0xFF0000u) | (u >> 8 & 0xFF00u) | u >> 24;
             }
         }
 
