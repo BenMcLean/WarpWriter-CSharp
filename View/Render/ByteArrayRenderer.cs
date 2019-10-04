@@ -23,8 +23,7 @@ namespace WarpWriter.View.Render
             }
             set
             {
-                if (value != Height)
-                    Bytes = new byte[Width * value * 4];
+                Bytes = new byte[Width * value * 4];
             }
         }
 
