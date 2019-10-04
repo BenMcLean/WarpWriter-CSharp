@@ -1,6 +1,6 @@
 ﻿namespace WarpWriter.Model.Fetch
 {
-    class FetchModel : Fetch, IModel
+    public class FetchModel : Fetch, IModel
     {
         public Fetch Fetch { get; set; }
         public uint SizeX { get; set; }
