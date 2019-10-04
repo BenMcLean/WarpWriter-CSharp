@@ -29,9 +29,10 @@ namespace WarpWriter.View.Render
 
         public ByteArrayRenderer DrawPixel(int x, int y, uint color)
         {
-            if (x >= 0 && x < Width && y >= 0 && y < Height)
+            uint height = Height;
+            if (x >= 0 && x < Width && y >= 0 && y < height)
             {
-                uint start = (uint)(y * Width + x) * 4;
+                uint start = (uint)((height - y - 1) * Width + x) * 4;
                 Bytes[start] = (byte)(color >> 24);
                 Bytes[start + 1] = (byte)(color >> 16);
                 Bytes[start + 2] = (byte)(color >> 8);
