@@ -6,35 +6,35 @@ namespace WarpWriter.View
 {
     public static class PixelCubeDraw
     {
-        public static T Draw<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCube<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            Draw(model, renderer);
+            PixelCube(model, renderer);
             return renderer;
         }
 
-        public static void Draw<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCube<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            DrawRight(model, renderer);
+            PixelCubeRight(model, renderer);
         }
 
-        public static T DrawRight<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCubeRight<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            DrawRight(model, renderer);
+            PixelCubeRight(model, renderer);
             return renderer;
         }
 
-        public static void DrawRight<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCubeRight<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            DrawRight(model, renderer, 6, 6);
+            PixelCubeRight(model, renderer, 6, 6);
         }
 
-        public static T DrawRight<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCubeRight<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            DrawRight(model, renderer, scaleX, scaleY);
+            PixelCubeRight(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void DrawRight<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCubeRight<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int z = 0; z < sizeZ; z++)
@@ -54,24 +54,24 @@ namespace WarpWriter.View
             }
         }
 
-        public static T DrawRightPeek<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCubeRightPeek<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            DrawRightPeek(model, renderer);
+            PixelCubeRightPeek(model, renderer);
             return renderer;
         }
 
-        public static void DrawRightPeek<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCubeRightPeek<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            DrawRightPeek(model, renderer, 6, 6);
+            PixelCubeRightPeek(model, renderer, 6, 6);
         }
 
-        public static T DrawRightPeek<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCubeRightPeek<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            DrawRightPeek(model, renderer, scaleX, scaleY);
+            PixelCubeRightPeek(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void DrawRightPeek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCubeRightPeek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int z = 0; z < sizeZ; z++)
@@ -93,24 +93,24 @@ namespace WarpWriter.View
             }
         }
 
-        public static T DrawLeft<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCubeLeft<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            DrawLeft(model, renderer);
+            PixelCubeLeft(model, renderer);
             return renderer;
         }
 
-        public static void DrawLeft<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCubeLeft<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            DrawLeft(model, renderer, 6, 6);
+            PixelCubeLeft(model, renderer, 6, 6);
         }
 
-        public static T DrawLeft<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCubeLeft<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            DrawLeft(model, renderer, scaleX, scaleY);
+            PixelCubeLeft(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void DrawLeft<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCubeLeft<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int z = 0; z < sizeZ; z++)
@@ -130,24 +130,24 @@ namespace WarpWriter.View
             }
         }
 
-        public static T DrawTop<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCubeTop<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            DrawTop(model, renderer);
+            PixelCubeTop(model, renderer);
             return renderer;
         }
 
-        public static void DrawTop<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCubeTop<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            DrawTop(model, renderer, 6, 6);
+            PixelCubeTop(model, renderer, 6, 6);
         }
 
-        public static T DrawTop<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCubeTop<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            DrawTop(model, renderer, scaleX, scaleY);
+            PixelCubeTop(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void DrawTop<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCubeTop<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int y = 0; y < sizeY; y++)
@@ -167,24 +167,24 @@ namespace WarpWriter.View
             }
         }
 
-        public static T DrawBottom<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCubeBottom<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            DrawBottom(model, renderer);
+            PixelCubeBottom(model, renderer);
             return renderer;
         }
 
-        public static void DrawBottom<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCubeBottom<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            DrawBottom(model, renderer, 6, 6);
+            PixelCubeBottom(model, renderer, 6, 6);
         }
 
-        public static T DrawBottom<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCubeBottom<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            DrawBottom(model, renderer, scaleX, scaleY);
+            PixelCubeBottom(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void DrawBottom<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCubeBottom<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             uint sizeX = model.SizeX, sizeY = model.SizeY, sizeZ = model.SizeZ;
             for (int y = 0; y < sizeY; y++)
@@ -204,24 +204,24 @@ namespace WarpWriter.View
             }
         }
 
-        public static T Draw45<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCube45<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            Draw45(model, renderer);
+            PixelCube45(model, renderer);
             return renderer;
         }
 
-        public static void Draw45<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCube45<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            Draw45(model, renderer, 6, 6);
+            PixelCube45(model, renderer, 6, 6);
         }
 
-        public static T Draw45<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCube45<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            Draw45(model, renderer, scaleX, scaleY);
+            PixelCube45(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void Draw45<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCube45<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             byte v;
             int sizeX = (int)model.SizeX,
@@ -272,24 +272,24 @@ namespace WarpWriter.View
             }
         }
 
-        public static T Draw45Peek<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCube45Peek<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            Draw45Peek(model, renderer);
+            PixelCube45Peek(model, renderer);
             return renderer;
         }
 
-        public static void Draw45Peek<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCube45Peek<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            Draw45Peek(model, renderer, 4, 6);
+            PixelCube45Peek(model, renderer, 4, 6);
         }
 
-        public static T Draw45Peek<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCube45Peek<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            Draw45Peek(model, renderer, scaleX, scaleY);
+            PixelCube45Peek(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void Draw45Peek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCube45Peek<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             byte v;
             int sizeX = (int)model.SizeX,
@@ -353,24 +353,24 @@ namespace WarpWriter.View
             }
         }
 
-        public static T DrawAbove<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
+        public static T PixelCubeAbove<T>(this T renderer, IModel model) where T : IRectangleRenderer<T>
         {
-            DrawAbove(model, renderer);
+            PixelCubeAbove(model, renderer);
             return renderer;
         }
 
-        public static void DrawAbove<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
+        public static void PixelCubeAbove<T>(IModel model, T renderer) where T : IRectangleRenderer<T>
         {
-            DrawAbove(model, renderer, 6, 2);
+            PixelCubeAbove(model, renderer, 6, 2);
         }
 
-        public static T DrawAbove<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static T PixelCubeAbove<T>(this T renderer, IModel model, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            DrawAbove(model, renderer, scaleX, scaleY);
+            PixelCubeAbove(model, renderer, scaleX, scaleY);
             return renderer;
         }
 
-        public static void DrawAbove<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
+        public static void PixelCubeAbove<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
             int sizeX = (int)model.SizeX,
                     sizeY = (int)model.SizeY,
@@ -442,13 +442,13 @@ namespace WarpWriter.View
             //- ((sizeVX + sizeVY & 1) << 2); // if sizeVX + sizeVY is odd, this is 4, otherwise it is 0
         }
 
-        public static T DrawIso<T>(this T renderer, IModel model) where T : ITriangleRenderer<T>
+        public static T PixelCubeIso<T>(this T renderer, IModel model) where T : ITriangleRenderer<T>
         {
-            DrawIso(model, renderer);
+            PixelCubeIso(model, renderer);
             return renderer;
         }
 
-        public static void DrawIso<T>(IModel model, T renderer) where T : ITriangleRenderer<T>
+        public static void PixelCubeIso<T>(IModel model, T renderer) where T : ITriangleRenderer<T>
         {
             byte v;
             int sizeVX = (int)model.SizeX, sizeVY = (int)model.SizeY, sizeVZ = (int)model.SizeZ,

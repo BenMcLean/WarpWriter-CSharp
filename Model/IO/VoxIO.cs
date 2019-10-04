@@ -123,8 +123,7 @@ namespace WarpWriter.Model.IO
 
         public static void ReadVox(Stream stream, out ArrayModel model, out uint[] palette)
         {
-            byte[][][] m;
-            VoxIO.ReadVox(stream, out m, out palette);
+            ReadVox(stream, out byte[][][] m, out palette);
             model = new ArrayModel(m);
         }
     }

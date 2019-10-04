@@ -1,6 +1,7 @@
 using Godot;
-using System;
+using System.IO;
 using WarpWriter.Model.Fetch;
+using WarpWriter.Model.IO;
 using WarpWriter.View;
 using WarpWriter.View.Color;
 using WarpWriter.View.Render;
@@ -14,17 +15,21 @@ public class WarpWriterDemo : Camera2D
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        uint[] palette = new uint[256];
-        for (uint i = 1; i < palette.Length; i++)
-            palette[i] = uint.MaxValue;
+        //uint[] palette = new uint[256];
+        //for (uint i = 1; i < palette.Length; i++)
+        //    palette[i] = uint.MaxValue;
+        //FetchModel model = new FetchModel()
+        //{
+        //    Fetch = ColorFetch.Get(255),
+        //    SizeX = 50,
+        //    SizeY = 50,
+        //    SizeZ = 50,
+        //};
 
-        FetchModel model = new FetchModel()
-        {
-            Fetch = ColorFetch.Get(255),
-            SizeX = 50,
-            SizeY = 50,
-            SizeZ = 50,
-        };
+        ArrayModel model;
+        uint[] palette;
+        using (FileStream file = new FileStream("Artillery.vox", FileMode.Open))
+            VoxIO.ReadVox(file, out model, out palette);
 
         ByteArrayRenderer renderer = new ByteArrayRenderer()
         {
@@ -34,7 +39,7 @@ public class WarpWriterDemo : Camera2D
             {
                 Palette = palette,
             }
-        }.DrawIso(model);
+        }.PixelCubeIso(model);
 
         Godot.Image image = new Image();
         image.CreateFromData((int)renderer.Width, (int)renderer.Height, false, Image.Format.Rgba8, renderer.Bytes);

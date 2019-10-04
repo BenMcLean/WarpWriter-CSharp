@@ -59,6 +59,7 @@
     <Compile Include="Model\Fetch\FetchModel.cs" />
     <Compile Include="Model\Fetch\IFetch.cs" />
     <Compile Include="Model\Fetch\IModel.cs" />
+    <Compile Include="Model\IO\VoxIO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\Color\FlatVoxelColor.cs" />
     <Compile Include="View\Color\IVoxelColor.cs" />
