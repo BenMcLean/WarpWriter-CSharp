@@ -1,5 +1,4 @@
-﻿using System;
-using WarpWriter.View.Color;
+﻿using WarpWriter.View.Color;
 
 namespace WarpWriter.View.Render
 {
