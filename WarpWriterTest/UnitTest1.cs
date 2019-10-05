@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WarpWriter.Model.Fetch;
 using WarpWriter.Model.IO;
@@ -28,6 +29,7 @@ namespace WarpWriterTest
                     Palette = palette,
                 }
             }.PixelCubeIso(model);
+            Assert.IsTrue(renderer.Bytes.Sum(b => b) > 0);
         }
     }
 }

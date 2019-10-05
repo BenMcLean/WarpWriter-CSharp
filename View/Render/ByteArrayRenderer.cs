@@ -33,9 +33,9 @@ namespace WarpWriter.View.Render
             if (x >= 0 && x < Width && y >= 0 && y < height)
             {
                 uint start = (uint)((height - y - 1) * Width + x) * 4;
-                Bytes[start] = (byte)(color >> 24);
-                Bytes[start + 1] = (byte)(color >> 16);
-                Bytes[start + 2] = (byte)(color >> 8);
+                Bytes[start] = (byte)(color);
+                Bytes[start + 1] = (byte)(color >> 8);
+                Bytes[start + 2] = (byte)(color >> 16);
                 Bytes[start + 3] = Transparency;
             }
             return this;
