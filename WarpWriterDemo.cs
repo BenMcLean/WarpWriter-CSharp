@@ -33,12 +33,13 @@ public class WarpWriterDemo : Camera2D
 
         ByteArrayRenderer renderer = new ByteArrayRenderer()
         {
-            Width = PixelCubeDraw.IsoWidth(model),
+            Width = PixelCubeDraw.IsoWidth(model) * 2,
             Height = PixelCubeDraw.IsoHeight(model),
             Color = new ShadedVoxelColor()
             {
                 Palette = new Colorizer(palette),
-            }
+            },
+            ScaleX = 2,
         }.PixelCubeIso(model);
 
         Godot.Image image = new Image();
