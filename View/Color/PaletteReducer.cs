@@ -61,7 +61,7 @@ namespace WarpWriter.View.Color
                             dist = 0x7FFFFFFFU;
                             for (int i = 1; i < PaletteLength; i++)
                             {
-                                if (dist > (dist = Math.Min(dist, difference(PaletteArray[i], rr, gg, bb))))
+                                if (dist > (dist = Math.Min(dist, Difference(PaletteArray[i], rr, gg, bb))))
                                     PaletteMapping[c2] = (byte)i;
                             }
                         }
@@ -70,14 +70,19 @@ namespace WarpWriter.View.Color
             }
         }
 
-        public double difference(uint rgba1, uint r2, uint g2, uint b2)
+        public double Difference(uint rgba1, uint r2, uint g2, uint b2)
         {
             if ((rgba1 & 0x80) == 0) return Double.PositiveInfinity;
+            return Difference((rgba1 >> 24), (rgba1 >> 16 & 0xFF), (rgba1 >> 8 & 0xFF), r2, g2, b2);
+        }
+
+        public double Difference(uint r1, uint g1, uint b1, uint r2, uint g2, uint b2)
+        {
             double x, y, z, r, g, b;
 
-            r = (rgba1 >> 24) / 255.0;
-            g = (rgba1 >> 16 & 0xFF) / 255.0;
-            b = (rgba1 >> 8 & 0xFF) / 255.0;
+            r = r1 / 255.0;
+            g = g1 / 255.0;
+            b = b1 / 255.0;
 
             r = Math.Pow((r + 0.055) / 1.055, 2.4);
             g = Math.Pow((g + 0.055) / 1.055, 2.4);
