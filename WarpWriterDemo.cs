@@ -35,9 +35,9 @@ public class WarpWriterDemo : Camera2D
         {
             Width = PixelCubeDraw.IsoWidth(model),
             Height = PixelCubeDraw.IsoHeight(model),
-            Color = new FlatVoxelColor()
+            Color = new ShadedVoxelColor()
             {
-                Palette = palette,
+                Palette = new Colorizer(palette),
             }
         }.PixelCubeIso(model);
 

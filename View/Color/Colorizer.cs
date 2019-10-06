@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,8 +25,8 @@ namespace WarpWriter.View.Color
                 Reducer.ReduceIndex(0x00FFFFFF), Reducer.ReduceIndex(0x0000FFFF), Reducer.ReduceIndex(0xFF00FFFF)
             };
             Grays = new byte[] {
-                Reducer.ReduceIndex(0x000000FF), Reducer.ReduceIndex(0x444444FF), Reducer.ReduceIndex(0x888888FF),
-                Reducer.ReduceIndex(0xCCCCCCFF), Reducer.ReduceIndex(0xFFFFFFFF)
+                Reducer.ReduceIndex(0xFF000000), Reducer.ReduceIndex(0xFF444444), Reducer.ReduceIndex(0xFF888888),
+                Reducer.ReduceIndex(0xFFCCCCCC), Reducer.ReduceIndex(0xFFFFFFFF)
             };
             int THRESHOLD = 64;//0.011; // threshold controls the "stark-ness" of color changes; must not be negative.
             byte[] paletteMapping = new byte[1 << 16];
@@ -39,7 +39,7 @@ namespace WarpWriter.View.Color
             int shift1 = 6, shift2 = 11;
             uint color;
             int r, g, b;
-            int cw, cm, t;
+            int cw, cm;
             for (int i = 1; i < Count; i++)
             {
                 color = palette[i];
@@ -47,9 +47,9 @@ namespace WarpWriter.View.Color
                 {
                     color |= 0xFF;
                 }
-                r = (int)(color >> 24);
-                g = (int)(color >> 16 & 0xFF);
-                b = (int)(color >> 8 & 0xFF);
+                r = (int)(color & 0xFF);
+                g = (int)(color >> 8 & 0xFF);
+                b = (int)(color >> 16 & 0xFF);
                 cw = r - b;
                 cm = g - b;
                 paletteMapping[
@@ -59,19 +59,19 @@ namespace WarpWriter.View.Color
                                 | (cms[i] = (uint)cm + 255 >> 4) << shift2] = (byte)i;
             }
 
-            for (uint icm = 0; icm <= cmLim; icm++)
+            for (int icm = 0; icm <= cmLim; icm++)
             {
-                for (uint icw = 0; icw <= cwLim; icw++)
+                for (int icw = 0; icw <= cwLim; icw++)
                 {
-                    for (uint iy = 0; iy <= yLim; iy++)
+                    for (int iy = 0; iy <= yLim; iy++)
                     {
-                        uint c2 = icm << shift2 | icw << shift1 | iy;
+                        int c2 = icm << shift2 | icw << shift1 | iy;
                         if (paletteMapping[c2] == 0)
                         {
                             double dist = double.PositiveInfinity;
                             for (int i = 1; i < Count; i++)
                             {
-                                if (Math.Abs(lumas[i] - (int)iy) < 28 && dist > (dist = Math.Min(dist, Reducer.Difference(lumas[i], cws[i], cms[i], iy, icw, icm))))
+                                if (Math.Abs(lumas[i] - (int)iy) < 28 && dist > (dist = Math.Min(dist, DifferenceWarmMild((int)lumas[i], (int)cws[i], (int)cms[i], iy, icw, icm))))
                                     paletteMapping[c2] = (byte)i;
                             }
                         }
@@ -86,45 +86,52 @@ namespace WarpWriter.View.Color
                 uint rev = reverse[i];
                 int y = (int)(rev & yLim), match = i, yBright = y * 5 / 2, yDim = y * 3 / 2, yDark = y, luma, warm, mild;
 
-                cwf = ((cw = (int)cws[i]) - 16) / 30f;
-                cmf = ((cm = (int)cms[i]) - 16) / 30f;
-
+                cwf = (cw = (int)cws[i] - 16) / 30f;
+                cmf = (cm = (int)cms[i] - 16) / 30f;
+                Console.WriteLine("i={0:D3}: y={1:D3}, cw={2:D3}, cm={3:D3}", i, y, cw, cm);
                 //values[i][0] = values[i][1] = values[i][3] = 
                 Values[i][2] = palette[i];
 
                 luma = yDim;
-                warm = ((cw * 395 + 31 >> 5) - 192) / 8;
-                mild = ((cm * 395 + 31 >> 5) - 192) / 8;
-                r = (int)(luma + warm * 5 - mild * 4);
-                g = (int)(luma + mild * 4 - warm * 3);
-                b = (int)(luma - warm * 3 - mild * 4);
+                //warm = ((cw * 395 + 31) / 32 - 192) / 16;
+                //mild = ((cm * 395 + 31) / 32 - 192) / 16;
+                warm = cw;
+                mild = cm;
+                r = (luma + warm * 5 - mild * 4);
+                g = (luma - warm * 3 + mild * 4);
+                b = (luma - warm * 3 - mild * 4);
 
                 Values[i][1] = (uint)(
-                        BasicTools.Clamp(r, 0, 255) << 24 |
-                                BasicTools.Clamp(g, 0, 255) << 16 |
-                                BasicTools.Clamp(b, 0, 255) << 8 | 0xFF);
+                        BasicTools.Clamp(r, 0, 255) |
+                                BasicTools.Clamp(g, 0, 255) << 8 |
+                                BasicTools.Clamp(b, 0, 255) << 16) | 0xFF000000U;
 
                 luma = yBright;
-                warm = (cw * 333 + 31 >> 5) - 162;
-                mild = (cm * 333 + 31 >> 5) - 162;//(cg * (256 - yBright) * 395 + 4095 >> 12) - 192;
-                r = (int)(luma + warm * 5 - mild * 4);
-                g = (int)(luma + mild * 4 - warm * 3);
-                b = (int)(luma - warm * 3 - mild * 4);
+                //warm = ((cw * 333 + 31) / 32 - 162) / 16;
+                //mild = ((cm * 333 + 31) / 32 - 162) / 16;
+                warm = cw;
+                mild = cm;
+                r = (luma + warm * 5 - mild * 4);
+                g = (luma - warm * 3 + mild * 4);
+                b = (luma - warm * 3 - mild * 4);
                 Values[i][3] = (uint)(
-                        BasicTools.Clamp(r, 0, 255) << 24 |
-                                BasicTools.Clamp(g, 0, 255) << 16 |
-                                BasicTools.Clamp(b, 0, 255) << 8 | 0xFF);
+                        BasicTools.Clamp(r, 0, 255) |
+                                BasicTools.Clamp(g, 0, 255) << 8 |
+                                BasicTools.Clamp(b, 0, 255) << 16) | 0xFF000000U;
                 luma = yDark;
-                warm = (cw * 215 >> 4) - 208;
-                mild = (cm * 215 >> 4) - 208;//(cg * (256 - yDark) * 215 >> 11) - 208;
-                r = (int)(luma + warm * 5 - mild * 4);
-                g = (int)(luma + mild * 4 - warm * 3);
-                b = (int)(luma - warm * 3 - mild * 4);
+                //warm = ((cw * 215) / 16 - 208) / 16;
+                //mild = ((cm * 215) / 16 - 208) / 16;
+                warm = cw;
+                mild = cm;
+                r = (luma + warm * 5 - mild * 4);
+                g = (luma - warm * 3 + mild * 4);
+                b = (luma - warm * 3 - mild * 4);
                 Values[i][0] = (uint)(
-                        BasicTools.Clamp(r, 0, 255) << 24 |
-                                BasicTools.Clamp(g, 0, 255) << 16 |
-                                BasicTools.Clamp(b, 0, 255) << 8 | 0xFF);
+                        BasicTools.Clamp(r, 0, 255) |
+                                BasicTools.Clamp(g, 0, 255) << 8 |
+                                BasicTools.Clamp(b, 0, 255) << 16) | 0xFF000000U;
 
+                Console.WriteLine("{0:D}:{1:X8},{2:X8},{3:X8},{4:X8}", i, Values[i][0], Values[i][1], Values[i][2], Values[i][3]);
                 Ramps[i][2] = (byte)i;
                 Ramps[i][3] = Grays[4];//15;  //0xFFFFFFFF, white
                 Ramps[i][1] = Grays[0];//0x010101FF, black

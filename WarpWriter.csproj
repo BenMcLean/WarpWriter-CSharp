@@ -52,7 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Decide\IDecide.cs" />
-    <Compile Include="Model\Extra\ArrayTools.cs" />
+    <Compile Include="Model\Extra\BasicTools.cs" />
     <Compile Include="Model\Extra\RNG.cs" />
     <Compile Include="Model\Fetch\ArrayModel.cs" />
     <Compile Include="Model\Fetch\Fetch.cs" />
@@ -66,6 +66,7 @@
     <Compile Include="View\Color\FlatVoxelColor.cs" />
     <Compile Include="View\Color\IVoxelColor.cs" />
     <Compile Include="View\Color\PaletteReducer.cs" />
+    <Compile Include="View\Color\ShadedVoxelColor.cs" />
     <Compile Include="View\PixelCubeDraw.cs" />
     <Compile Include="View\Render\ByteArrayRenderer.cs" />
     <Compile Include="View\Render\IRectangleRenderer.cs" />

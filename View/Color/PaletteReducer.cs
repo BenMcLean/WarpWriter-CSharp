@@ -35,7 +35,7 @@ namespace WarpWriter.View.Color
                 rgbaPalette = RELAXED_ROLL;
             }
             Array.Clear(PaletteArray, 0, 256);
-            Array.Clear(PaletteArray, 0, 0x8000);
+            Array.Clear(PaletteMapping, 0, 0x8000);
             PaletteLength = Math.Min(256, rgbaPalette.Length);
             uint color, c2;
             double dist;
@@ -78,49 +78,54 @@ namespace WarpWriter.View.Color
 
         public double Difference(uint r1, uint g1, uint b1, uint r2, uint g2, uint b2)
         {
-            double x, y, z, r, g, b;
+            double rmean = (r1 + r2),
+                r = r1 - r2, g = (g1 - g2) * 2.0, b = b1 - b2,
+                y = Math.Max(r1, Math.Max(g1, b1)) - Math.Max(r2, Math.Max(g2, b2));
+            return (((1024 + rmean) * r * r) / 128.0) + g * g * 12 + (((1534 - rmean) * b * b) / 256.0) + y * y * 14;
 
-            r = r1 / 255.0;
-            g = g1 / 255.0;
-            b = b1 / 255.0;
+            //double x, y, z, r, g, b;
 
-            r = Math.Pow((r + 0.055) / 1.055, 2.4);
-            g = Math.Pow((g + 0.055) / 1.055, 2.4);
-            b = Math.Pow((b + 0.055) / 1.055, 2.4);
+            //r = r1 / 255.0;
+            //g = g1 / 255.0;
+            //b = b1 / 255.0;
 
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
+            //r = Math.Pow((r + 0.055) / 1.055, 2.4);
+            //g = Math.Pow((g + 0.055) / 1.055, 2.4);
+            //b = Math.Pow((b + 0.055) / 1.055, 2.4);
 
-            x = Math.Sqrt(x);
-            y = Math.Pow(y, 0.333333333);
-            z = Math.Sqrt(z);
+            //x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
+            //y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
+            //z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            double L = 100 * y;
-            double A = 500.0 * (x - y);
-            double B = 200.0 * (y - z);
+            //x = Math.Sqrt(x);
+            //y = Math.Pow(y, 0.333333333);
+            //z = Math.Sqrt(z);
 
-            r = r2 / 255.0;
-            g = g2 / 255.0;
-            b = b2 / 255.0;
+            //double L = 100 * y;
+            //double A = 500.0 * (x - y);
+            //double B = 200.0 * (y - z);
 
-            r = Math.Pow((r + 0.055) / 1.055, 2.4);
-            g = Math.Pow((g + 0.055) / 1.055, 2.4);
-            b = Math.Pow((b + 0.055) / 1.055, 2.4);
+            //r = r2 / 255.0;
+            //g = g2 / 255.0;
+            //b = b2 / 255.0;
 
-            x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
-            y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
-            z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
+            //r = Math.Pow((r + 0.055) / 1.055, 2.4);
+            //g = Math.Pow((g + 0.055) / 1.055, 2.4);
+            //b = Math.Pow((b + 0.055) / 1.055, 2.4);
 
-            x = Math.Sqrt(x);
-            y = Math.Pow(y, 0.333333333);
-            z = Math.Sqrt(z);
+            //x = (r * 0.4124 + g * 0.3576 + b * 0.1805);
+            //y = (r * 0.2126 + g * 0.7152 + b * 0.0722);
+            //z = (r * 0.0193 + g * 0.1192 + b * 0.9505);
 
-            L -= 100.0 * y;
-            A -= 500.0 * (x - y);
-            B -= 200.0 * (y - z);
+            //x = Math.Sqrt(x);
+            //y = Math.Pow(y, 0.333333333);
+            //z = Math.Sqrt(z);
 
-            return L * L * 350.0 + A * A * 25.0 + B * B * 10.0;
+            //L -= 100.0 * y;
+            //A -= 500.0 * (x - y);
+            //B -= 200.0 * (y - z);
+
+            //return L * L * 350.0 + A * A * 25.0 + B * B * 10.0;
         }
 
         public byte RandomColorIndex(RNG random)
