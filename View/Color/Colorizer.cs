@@ -43,9 +43,9 @@ namespace WarpWriter.View.Color
             for (int i = 1; i < Count; i++)
             {
                 color = palette[i];
-                if ((color & 0x80) == 0)
+                if ((color & 0x80000000) == 0)
                 {
-                    color |= 0xFF;
+                    color |= 0xFF000000;
                 }
                 r = (int)(color & 0xFF);
                 g = (int)(color >> 8 & 0xFF);
@@ -88,7 +88,7 @@ namespace WarpWriter.View.Color
 
                 cwf = (cw = (int)cws[i] - 16) / 30f;
                 cmf = (cm = (int)cms[i] - 16) / 30f;
-                Console.WriteLine("i={0:D3}: y={1:D3}, cw={2:D3}, cm={3:D3}", i, y, cw, cm);
+                //Console.WriteLine("i={0:D3}: y={1:D3}, cw={2:D3}, cm={3:D3}", i, y, cw, cm);
                 //values[i][0] = values[i][1] = values[i][3] = 
                 Values[i][2] = palette[i];
 
@@ -131,7 +131,7 @@ namespace WarpWriter.View.Color
                                 BasicTools.Clamp(g, 0, 255) << 8 |
                                 BasicTools.Clamp(b, 0, 255) << 16) | 0xFF000000U;
 
-                Console.WriteLine("{0:D}:{1:X8},{2:X8},{3:X8},{4:X8}", i, Values[i][0], Values[i][1], Values[i][2], Values[i][3]);
+                //Console.WriteLine("{0:D}:{1:X8},{2:X8},{3:X8},{4:X8}", i, Values[i][0], Values[i][1], Values[i][2], Values[i][3]);
                 Ramps[i][2] = (byte)i;
                 Ramps[i][3] = Grays[4];//15;  //0xFFFFFFFF, white
                 Ramps[i][1] = Grays[0];//0x010101FF, black
