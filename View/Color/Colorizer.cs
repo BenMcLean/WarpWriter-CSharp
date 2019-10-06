@@ -95,8 +95,8 @@ namespace WarpWriter.View.Color
                 luma = yDim;
                 //warm = ((cw * 395 + 31) / 32 - 192) / 16;
                 //mild = ((cm * 395 + 31) / 32 - 192) / 16;
-                warm = cw;
-                mild = cm;
+                warm = cw * 3 / 4;
+                mild = cm * 3 / 4;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
@@ -109,8 +109,8 @@ namespace WarpWriter.View.Color
                 luma = yBright;
                 //warm = ((cw * 333 + 31) / 32 - 162) / 16;
                 //mild = ((cm * 333 + 31) / 32 - 162) / 16;
-                warm = cw;
-                mild = cm;
+                warm = cw * 5 / 4;
+                mild = cm * 5 / 4;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
@@ -121,8 +121,8 @@ namespace WarpWriter.View.Color
                 luma = yDark;
                 //warm = ((cw * 215) / 16 - 208) / 16;
                 //mild = ((cm * 215) / 16 - 208) / 16;
-                warm = cw;
-                mild = cm;
+                warm = cw / 2;
+                mild = cm / 2;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
@@ -216,17 +216,17 @@ namespace WarpWriter.View.Color
         
         public byte Brighten(byte voxel)
         {
-            return Ramps[(voxel & 0xFF) % Count][3];
+            return Ramps[voxel % Count][3];
         }
 
         public byte Darken(byte voxel)
         {
-            return Ramps[(voxel & 0xFF) % Count][1];
+            return Ramps[voxel % Count][1];
         }
 
         public uint Dimmer(int brightness, byte voxel)
         {
-            return Values[voxel & 0xFF][BasicTools.Clamp(brightness, 0, 3)];
+            return Values[voxel % Count][BasicTools.Clamp(brightness, 0, 3)];
         }
 
         public byte Colorize(byte voxel, int brightness)
