@@ -427,13 +427,8 @@ namespace WarpWriter.View
         public static uint IsoHeight(IModel model)
         {
             return (model.SizeZ +
-                    Max(model.SizeX, model.SizeY)
+                    Math.Max(model.SizeX, model.SizeY)
                     ) * 4;
-        }
-
-        public static uint Max(uint a, uint b)
-        {
-            return a >= b ? a : b;
         }
 
         public static uint IsoWidth(IModel model)
