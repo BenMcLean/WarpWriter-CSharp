@@ -84,7 +84,7 @@ namespace WarpWriter.View.Color
             for (int i = 1; i < Count; i++)
             {
                 uint rev = reverse[i];
-                int y = (int)(rev & yLim), match = i, yBright = y * 5 / 2, yDim = y * 3 / 2, yDark = y, luma, warm, mild;
+                int y = (int)(rev & yLim), match = i, yBright = y * 9 / 2, yDim = y * 3, yDark = y, luma, warm, mild;
 
                 cwf = (cw = (int)cws[i] - 16) / 30f;
                 cmf = (cm = (int)cms[i] - 16) / 30f;
@@ -95,8 +95,8 @@ namespace WarpWriter.View.Color
                 luma = yDim;
                 //warm = ((cw * 395 + 31) / 32 - 192) / 16;
                 //mild = ((cm * 395 + 31) / 32 - 192) / 16;
-                warm = cw * 3 / 4;
-                mild = cm * 3 / 4;
+                warm = cw * 5 / 3;
+                mild = cm * 5 / 3;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
@@ -109,8 +109,8 @@ namespace WarpWriter.View.Color
                 luma = yBright;
                 //warm = ((cw * 333 + 31) / 32 - 162) / 16;
                 //mild = ((cm * 333 + 31) / 32 - 162) / 16;
-                warm = cw * 5 / 4;
-                mild = cm * 5 / 4;
+                warm = cw * 5 / 3;
+                mild = cm * 5 / 3;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
@@ -121,8 +121,8 @@ namespace WarpWriter.View.Color
                 luma = yDark;
                 //warm = ((cw * 215) / 16 - 208) / 16;
                 //mild = ((cm * 215) / 16 - 208) / 16;
-                warm = cw / 2;
-                mild = cm / 2;
+                warm = cw * 3 / 2;
+                mild = cm * 3 / 2;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
@@ -132,72 +132,80 @@ namespace WarpWriter.View.Color
                                 BasicTools.Clamp(b, 0, 255) << 16) | 0xFF000000U;
 
                 //Console.WriteLine("{0:D}:{1:X8},{2:X8},{3:X8},{4:X8}", i, Values[i][0], Values[i][1], Values[i][2], Values[i][3]);
+                
+                //// This seems like a much simpler approach than the large comment below it.
+                //// The downside is that in some small palettes, the lighter or darker variants may be the same as the original, or both
+                //// darker variants could be the same.
+                Ramps[i][0] = Reducer.ReduceIndex(Values[i][0]);
+                Ramps[i][1] = Reducer.ReduceIndex(Values[i][1]);
                 Ramps[i][2] = (byte)i;
-                Ramps[i][3] = Grays[4];//15;  //0xFFFFFFFF, white
-                Ramps[i][1] = Grays[0];//0x010101FF, black
-                Ramps[i][0] = Grays[0];//0x010101FF, black
-                for (int yy = y + 2, rr = (int)rev + 2; yy <= yLim; yy++, rr++)
-                {
-                    if ((idx2 = paletteMapping[rr] & 255) != i && DifferenceWarmMild((int)lumas[idx2], (int)cws[idx2], (int)cms[idx2], y, cw, cm) > THRESHOLD)
-                    {
-                        Ramps[i][3] = paletteMapping[rr];
-                        break;
-                    }
-                    adj = 1f + ((yLim + 1) * 0.5f - yy) / 1024f;
-                    cwf = BasicTools.Clamp(cwf * adj, -0.5f, 0.5f);
-                    cmf = BasicTools.Clamp(cmf * adj, -0.5f, 0.5f);
+                Ramps[i][3] = Reducer.ReduceIndex(Values[i][3]);
+                //Ramps[i][2] = (byte)i;
+                //Ramps[i][3] = Grays[4];//15;  //0xFFFFFFFF, white
+                //Ramps[i][1] = Grays[0];//0x010101FF, black
+                //Ramps[i][0] = Grays[0];//0x010101FF, black
+                //for (int yy = y + 2, rr = (int)rev + 2; yy <= yLim; yy++, rr++)
+                //{
+                //    if ((idx2 = paletteMapping[rr] & 255) != i && DifferenceWarmMild((int)lumas[idx2], (int)cws[idx2], (int)cms[idx2], y, cw, cm) > THRESHOLD)
+                //    {
+                //        Ramps[i][3] = paletteMapping[rr];
+                //        break;
+                //    }
+                //    adj = 1f + ((yLim + 1) * 0.5f - yy) / 1024f;
+                //    cwf = BasicTools.Clamp(cwf * adj, -0.5f, 0.5f);
+                //    cmf = BasicTools.Clamp(cmf * adj, -0.5f, 0.5f);
 
-                    rr = yy
-                            | (cw = (int)((cwf + 0.5f) * cwLim)) << shift1
-                            | (cm = (int)((cmf + 0.5f) * cmLim)) << shift2;
-                }
-                cwf = ((cw = (int)cws[i]) - 16) * 11f / 32f;
-                cmf = ((cm = (int)cms[i]) - 16) * 11f / 32f;
-                for (int yy = y - 2, rr = (int)rev - 2; yy > 0; rr--)
-                {
-                    if ((idx2 = paletteMapping[rr] & 255) != i && DifferenceWarmMild((int)lumas[idx2], (int)cws[idx2], (int)cms[idx2], y, cw, cm) > THRESHOLD)
-                    {
-                        Ramps[i][1] = paletteMapping[rr];
-                        rev = (uint)rr;
-                        y = yy;
-                        match = paletteMapping[rr] & 255;
-                        break;
-                    }
+                //    rr = yy
+                //            | (cw = (int)((cwf + 0.5f) * cwLim)) << shift1
+                //            | (cm = (int)((cmf + 0.5f) * cmLim)) << shift2;
+                //}
+                //cwf = ((cw = (int)cws[i]) - 16) * 11f / 32f;
+                //cmf = ((cm = (int)cms[i]) - 16) * 11f / 32f;
+                //for (int yy = y - 2, rr = (int)rev - 2; yy > 0; rr--)
+                //{
+                //    if ((idx2 = paletteMapping[rr] & 255) != i && DifferenceWarmMild((int)lumas[idx2], (int)cws[idx2], (int)cms[idx2], y, cw, cm) > THRESHOLD)
+                //    {
+                //        Ramps[i][1] = paletteMapping[rr];
+                //        rev = (uint)rr;
+                //        y = yy;
+                //        match = paletteMapping[rr] & 255;
+                //        break;
+                //    }
 
-                    adj = 1f + (yy - (yLim + 1) * 0.5f) / 1024f;
-                    cwf = BasicTools.Clamp(cwf * adj, -0.5f, 0.5f);
-                    cmf = BasicTools.Clamp(cmf * adj, -0.5f, 0.5f);
+                //    adj = 1f + (yy - (yLim + 1) * 0.5f) / 1024f;
+                //    cwf = BasicTools.Clamp(cwf * adj, -0.5f, 0.5f);
+                //    cmf = BasicTools.Clamp(cmf * adj, -0.5f, 0.5f);
 
-                    rr = yy
-                            | (cw = (int)((cwf + 0.5f) * cwLim)) << shift1
-                            | (cm = (int)((cmf + 0.5f) * cmLim)) << shift2;
+                //    rr = yy
+                //            | (cw = (int)((cwf + 0.5f) * cwLim)) << shift1
+                //            | (cm = (int)((cmf + 0.5f) * cmLim)) << shift2;
 
-                    if (--yy == 0)
-                    {
-                        match = -1;
-                    }
-                }
-                if (match >= 0)
-                {
-                    cwf = ((cw = (int)cws[match]) - 16) / 30f;
-                    cmf = ((cm = (int)cms[match]) - 16) / 30f;
-                    for (int yy = y - 3, rr = (int)rev - 3; yy > 0; yy--, rr--)
-                    {
-                        if ((idx2 = paletteMapping[rr] & 255) != match && DifferenceWarmMild((int)lumas[idx2], (int)cws[idx2], (int)cms[idx2], y, cw, cm) > THRESHOLD)
-                        {
-                            Ramps[i][0] = paletteMapping[rr];
-                            break;
-                        }
+                //    if (--yy == 0)
+                //    {
+                //        match = -1;
+                //    }
+                //}
+                //if (match >= 0)
+                //{
+                //    cwf = ((cw = (int)cws[match]) - 16) / 30f;
+                //    cmf = ((cm = (int)cms[match]) - 16) / 30f;
+                //    for (int yy = y - 3, rr = (int)rev - 3; yy > 0; yy--, rr--)
+                //    {
+                //        if ((idx2 = paletteMapping[rr] & 255) != match && DifferenceWarmMild((int)lumas[idx2], (int)cws[idx2], (int)cms[idx2], y, cw, cm) > THRESHOLD)
+                //        {
+                //            Ramps[i][0] = paletteMapping[rr];
+                //            break;
+                //        }
 
-                        adj = 1f + (yy - (yLim + 1) * 0.5f) / 1024f;
-                        cwf = BasicTools.Clamp(cwf * adj, -0.5f, 0.5f);
-                        cmf = BasicTools.Clamp(cmf * adj, -0.5f, 0.5f);
+                //        adj = 1f + (yy - (yLim + 1) * 0.5f) / 1024f;
+                //        cwf = BasicTools.Clamp(cwf * adj, -0.5f, 0.5f);
+                //        cmf = BasicTools.Clamp(cmf * adj, -0.5f, 0.5f);
 
-                        rr = yy
-                                | (cw = (int)((cwf + 0.5f) * cwLim)) << shift1
-                                | (cm = (int)((cmf + 0.5f) * cmLim)) << shift2;
-                    }
-                }
+                //        rr = yy
+                //                | (cw = (int)((cwf + 0.5f) * cwLim)) << shift1
+                //                | (cm = (int)((cmf + 0.5f) * cmLim)) << shift2;
+                //    }
+                //}
             }
         }
 
