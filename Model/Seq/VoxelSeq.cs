@@ -15,13 +15,13 @@ namespace WarpWriter.Model.Seq
             Voxels = new Dictionary<ulong, byte>(capacity);
             Full = new List<ulong>(capacity);
             Order = new List<ulong>(capacity);
-            SizeX = 64;
-            SizeY = 64;
-            SizeZ = 64;
+            SizeX = 64UL;
+            SizeY = 64UL;
+            SizeZ = 64UL;
         }
-        public int SizeX { get; set; }
-        public int SizeY { get; set; }
-        public int SizeZ { get; set; }
+        public ulong SizeX { get; set; }
+        public ulong SizeY { get; set; }
+        public ulong SizeZ { get; set; }
         public Dictionary<ulong, byte> Voxels { get; set; }
         public List<ulong> Full { get; set; }
         public List<ulong> Order { get; set; }
@@ -74,7 +74,44 @@ namespace WarpWriter.Model.Seq
             return fused >> 42 & 0x1FFFFFUL;
         }
 
-
+        public ulong Rotate(ulong k, int rotation)
+        {
+            switch (rotation)
+            {
+                // 0-3 have z pointing towards z+ and the voxels rotating on that axis
+                case 0: return k;
+                case 1: return (k & 0x7FFFFC0000000000UL) | SizeX - (k & 0x00000000001FFFFFUL) << 21 | (k >> 21 & 0x00000000001FFFFFUL);
+                case 2: return (k & 0x7FFFFC0000000000UL) | (SizeY << 21) - (k & 0x000003FFFFE00000UL) | SizeX - (k & 0x00000000001FFFFFUL);
+                case 3: return (k & 0x7FFFFC0000000000UL) | (k & 0x00000000001FFFFFUL) << 21 | (SizeY - (k >> 21 & 0x00000000001FFFFFUL));
+                // 4-7 have z pointing towards y+ and the voxels rotating on that axis
+                case 4: return (k >> 21 & 0x000003FFFFE00000UL) | (SizeY << 21) - (k & 0x000003FFFFE00000UL) << 21 | (k & 0x00000000001FFFFFUL);
+                case 5: return (k >> 21 & 0x000003FFFFE00000UL) | (k & 0x00000000001FFFFFUL) << 42 | (k >> 21 & 0x00000000001FFFFFUL);
+                case 6: return (k >> 21 & 0x000003FFFFE00000UL) | (k & 0x000003FFFFE00000UL) << 21 | SizeX - (k & 0x00000000001FFFFFUL);
+                case 7: return (k >> 21 & 0x000003FFFFE00000UL) | (SizeX - (k & 0x00000000001FFFFFUL) << 42) | SizeY - (k >> 21 & 0x00000000001FFFFFUL);
+                // 8-11 have z pointing towards z-
+                case 8: return (SizeZ << 42) - (k & 0x7FFFFC0000000000UL) | (k & 0x000003FFFFE00000UL) | (k & 0x00000000001FFFFFUL);
+                case 9: return (SizeZ << 42) - (k & 0x7FFFFC0000000000UL) | (SizeY) - (k >> 21 & 0x00000000001FFFFFUL) | (k & 0x00000000001FFFFFUL) << 21;
+                case 10: return (SizeZ << 42) - (k & 0x7FFFFC0000000000UL) | (SizeY << 21) - (k & 0x000003FFFFE00000UL) | SizeX - (k & 0x00000000001FFFFFUL);
+                case 11: return (SizeZ << 42) - (k & 0x7FFFFC0000000000UL) | (k >> 21 & 0x00000000001FFFFFUL) | SizeX - (k & 0x00000000001FFFFFUL) << 21;
+                // 12-15 have z pointing towards y-
+                case 12: return (SizeZ << 21) - (k >> 21 & 0x000003FFFFE00000UL) | (k & 0x000003FFFFE00000UL) << 21 | (k & 0x00000000001FFFFFUL);
+                case 13: return (SizeZ << 21) - (k >> 21 & 0x000003FFFFE00000UL) | SizeX - (k & 0x00000000001FFFFFUL) << 42 | (k >> 21 & 0x00000000001FFFFFUL);
+                case 14: return (SizeZ << 21) - (k >> 21 & 0x000003FFFFE00000UL) | (SizeY << 42) - (k << 21 & 0x7FFFFC0000000000UL) | SizeX - (k & 0x00000000001FFFFFUL);
+                case 15: return (SizeZ << 21) - (k >> 21 & 0x000003FFFFE00000UL) | (k & 0x00000000001FFFFFUL) << 42 | SizeY - (k >> 21 & 0x00000000001FFFFFUL);
+                // 16-19 have z pointing towards x+ and the voxels rotating on that axis
+                case 16: return (k >> 42 & 0x00000000001FFFFFUL) | (k & 0x000003FFFFE00000UL) | (k << 42 & 0x7FFFFC0000000000UL);
+                case 17: return (k >> 42 & 0x00000000001FFFFFUL) | (k << 21 & 0x7FFFFC0000000000UL) | (SizeX - (k & 0x00000000001FFFFFUL) << 21);
+                case 18: return (k >> 42 & 0x00000000001FFFFFUL) | (SizeY << 21) - (k & 0x000003FFFFE00000UL) | (SizeX - (k & 0x00000000001FFFFFUL)) << 42;
+                case 19: return (k >> 42 & 0x00000000001FFFFFUL) | (SizeY << 42) - (k << 21 & 0x7FFFFC0000000000UL) | (k << 21 & 0x000003FFFFE00000UL);
+                // 20-23 have z pointing towards x- and the voxels rotating on that axis
+                case 20: return SizeZ - (k >> 42 & 0x00000000001FFFFFUL) | (k & 0x000003FFFFE00000UL) | (k << 42 & 0x7FFFFC0000000000UL);
+                case 21: return SizeZ - (k >> 42 & 0x00000000001FFFFFUL) | (k << 21 & 0x7FFFFC0000000000UL) | (SizeX - (k & 0x00000000001FFFFFUL) << 21);
+                case 22: return SizeZ - (k >> 42 & 0x00000000001FFFFFUL) | (SizeY << 21) - (k & 0x000003FFFFE00000UL) | (SizeX - (k & 0x00000000001FFFFFUL)) << 42;
+                case 23: return SizeZ - (k >> 42 & 0x00000000001FFFFFUL) | (SizeY << 42) - (k << 21 & 0x7FFFFC0000000000UL) | (k << 21 & 0x000003FFFFE00000UL);
+                default:
+                    throw new ArgumentException("This shouldn't be happening! The rotation " + rotation + " was bad.");
+            }
+        }
 
     }
 }
