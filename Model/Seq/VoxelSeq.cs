@@ -236,7 +236,7 @@ namespace WarpWriter.Model.Seq
                 return 0;
             return Rotate(Full[idx], Rotation);
         }
-        public ulong GetAtFull(int idx)
+        public byte GetAtFull(int idx)
         {
             if (idx < 0 || idx >= Full.Count)
                 return 0;
@@ -249,7 +249,7 @@ namespace WarpWriter.Model.Seq
                 return 0;
             return Rotate(Order[idx], Rotation);
         }
-        public ulong GetAtHollow(int idx)
+        public byte GetAtHollow(int idx)
         {
             if (idx < 0 || idx >= Order.Count)
                 return 0;

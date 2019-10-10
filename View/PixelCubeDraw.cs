@@ -1,5 +1,6 @@
 ﻿using System;
 using WarpWriter.Model.Fetch;
+using WarpWriter.Model.Seq;
 using WarpWriter.View.Render;
 
 namespace WarpWriter.View
@@ -790,6 +791,42 @@ namespace WarpWriter.View
                     }
                 }
                 // Finish drawing right edge
+            }
+        }
+
+        public static T PixelCubeIso<T>(this T renderer, VoxelSeq seq) where T : ITriangleRenderer<T>
+        {
+            PixelCubeIso(seq, renderer);
+            return renderer;
+        }
+
+        public static void PixelCubeIso<T>(VoxelSeq seq, T renderer) where T : ITriangleRenderer<T>
+        {
+            int len = seq.Order.Count;
+            ulong sizeX = seq.SizeX, sizeY = seq.SizeY, sizeZ = seq.SizeZ,
+                     pixelWidth = (sizeY + sizeX + 2) * 2 + 1,
+                     pixelHeight = (sizeX + sizeY + sizeZ + 3) * 3 + 1;
+            seq.Order.Sort(VoxelSeq.Side45[seq.Rotation]);
+            for (int i = 0; i < len; i++)
+            {
+                byte v = seq.GetAtHollow(i);
+                if (v != 0)
+                {
+                    ulong xyz = seq.KeyAtRotatedHollow(i),
+                             x = VoxelSeq.ExtractX(xyz),
+                             y = VoxelSeq.ExtractY(xyz),
+                             z = VoxelSeq.ExtractZ(xyz),
+                             xPos = (sizeY - y + x) * 2 + 1,
+                             yPos = (z + sizeX + sizeY - x - y) * 2 + 1,
+                             dep = 3 * (x + y + z) + 256;
+                    renderer.DrawLeftTriangleLeftFace((int)xPos, (int)yPos, v, (int)dep, (int)x, (int)y, (int)z);
+                    renderer.DrawRightTriangleLeftFace((int)xPos, (int)yPos + 2, v, (int)dep, (int)x, (int)y, (int)z);
+                    renderer.DrawLeftTriangleRightFace((int)xPos + 2, (int)yPos + 2, v, (int)dep, (int)x, (int)y, (int)z);
+                    renderer.DrawRightTriangleRightFace((int)xPos + 2, (int)yPos, v, (int)dep, (int)x, (int)y, (int)z);
+                    //if (z >= sizeZ - 1 || seq.getRotated(x, y, z + 1) == 0)
+                    renderer.DrawLeftTriangleVerticalFace((int)xPos, (int)yPos + 4, v, (int)dep, (int)x, (int)y, (int)z);
+                    renderer.DrawRightTriangleVerticalFace((int)xPos + 2, (int)yPos + 4, v, (int)dep, (int)x, (int)y, (int)z);
+                }
             }
         }
     }
