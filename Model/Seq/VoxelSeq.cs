@@ -22,6 +22,7 @@ namespace WarpWriter.Model.Seq
         public ulong SizeX { get; set; }
         public ulong SizeY { get; set; }
         public ulong SizeZ { get; set; }
+        public int Rotation { get; set; }
         public Dictionary<ulong, byte> Voxels { get; set; }
         public List<ulong> Full { get; set; }
         public List<ulong> Order { get; set; }
@@ -110,8 +111,126 @@ namespace WarpWriter.Model.Seq
                 case 23: return SizeZ - (k >> 42 & 0x00000000001FFFFFUL) | (SizeY << 42) - (k << 21 & 0x7FFFFC0000000000UL) | (k << 21 & 0x000003FFFFE00000UL);
                 default:
                     throw new ArgumentException("This shouldn't be happening! The rotation " + rotation + " was bad.");
+//                    return 0;
             }
         }
+        public VoxelSeq CounterX()
+        {
+            int r = Rotation;
+            switch (r & 28)
+            { // 16, 8, 4
+                case 0:
+                case 8:
+                    Rotation = (r ^ 4);
+                    break;
+                case 12:
+                case 4:
+                    Rotation = (r ^ 12);
+                    break;
+                case 16:
+                    Rotation = ((r + 1 & 3) | 16);
+                    break;
+                case 20:
+                    Rotation = ((r - 1 & 3) | 20);
+                    break;
+            }
+            return this;
+        }
+
+        public VoxelSeq CounterY()
+        {
+            int r = Rotation;
+            switch (r & 28) // 16, 8, and 4 can each be set.
+            {
+                case 0:
+                    Rotation = ((r & 3) | 20);
+                    break;
+                case 4:
+                    Rotation = ((r - 1 & 3) | (r & 12));
+                    break;
+                case 8:
+                    Rotation = ((2 - r & 3) | 16);
+                    break;
+                case 12:
+                    Rotation = ((r + 1 & 3) | (r & 12));
+                    break;
+                case 16:
+                    Rotation = (-r & 3);
+                    break;
+                case 20:
+                    Rotation = ((2 + r & 3) | 8);
+                    break;
+            }
+            return this;
+        }
+
+        public VoxelSeq CounterZ()
+        {
+            Rotation = ((Rotation - 1 & 3) | (Rotation & 28));
+            return this;
+        }
+        public VoxelSeq ClockX()
+        {
+            int r = Rotation;
+            switch (r & 28)
+            {
+                case 4:
+                case 12:
+                    Rotation = (r ^ 4);
+                    break;
+                case 0:
+                case 8:
+                    Rotation = (r ^ 12);
+                    break;
+                case 16:
+                    Rotation = ((r - 1 & 3) | 16);
+                    break;
+                case 20:
+                    Rotation = ((r + 1 & 3) | 20);
+                    break;
+            }
+            return this;
+        }
+
+        public VoxelSeq ClockY()
+        {
+            int r = Rotation;
+            switch (r & 28) // 16, 8, and 4 can each be set.
+            {
+                case 0:
+                    Rotation = ((-r & 3) | 16);
+                    break;
+                case 4:
+                    Rotation = ((r + 1 & 3) | (r & 12));
+                    break;
+                case 8:
+                    Rotation = ((2 + r & 3) | 20);
+                    break;
+                case 12:
+                    Rotation = ((r - 1 & 3) | (r & 12));
+                    break;
+                case 16:
+                    Rotation = ((2 - r & 3) | 8);
+                    break;
+                case 20:
+                    Rotation = (r & 3);
+                    break;
+            }
+            return this;
+        }
+
+        public VoxelSeq ClockZ()
+        {
+            Rotation = ((Rotation + 1 & 3) | (Rotation & 28));
+            return this;
+        }
+
+        public VoxelSeq Reset()
+        {
+            Rotation = (0);
+            return this;
+        }
+
 
     }
 }
