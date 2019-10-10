@@ -111,7 +111,7 @@ namespace WarpWriter.Model.Seq
                 case 23: return SizeZ - (k >> 42 & 0x00000000001FFFFFUL) | (SizeY << 42) - (k << 21 & 0x7FFFFC0000000000UL) | (k << 21 & 0x000003FFFFE00000UL);
                 default:
                     throw new ArgumentException("This shouldn't be happening! The rotation " + rotation + " was bad.");
-//                    return 0;
+                    //                    return 0;
             }
         }
         public VoxelSeq CounterX()
@@ -230,7 +230,236 @@ namespace WarpWriter.Model.Seq
             Rotation = (0);
             return this;
         }
+        public ulong KeyAtRotatedFull(int idx)
+        {
+            if (idx < 0 || idx >= Full.Count)
+                return 0;
+            return Rotate(Full[idx], Rotation);
+        }
+        public ulong GetAtFull(int idx)
+        {
+            if (idx < 0 || idx >= Full.Count)
+                return 0;
+            return Voxels[Full[idx]];
+        }
 
+        public ulong KeyAtRotatedHollow(int idx)
+        {
+            if (idx < 0 || idx >= Order.Count)
+                return 0;
+            return Rotate(Order[idx], Rotation);
+        }
+        public ulong GetAtHollow(int idx)
+        {
+            if (idx < 0 || idx >= Order.Count)
+                return 0;
+            return Voxels[Order[idx]];
+        }
+        public byte GetRotated(ulong x, ulong y, ulong z)
+        {
+            Voxels.TryGetValue(Rotate(Fuse(x, y, z), ((-Rotation) & 3) | Rotation & 0xFC), out byte v);
+            return v;
+        }
+        public static readonly Comparison<ulong>[] Side = new Comparison<ulong>[]
+        {
+            //0
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x as 1024 times more important than z, and y is irrelevant
+                    ((left << 21 & 0x000003FFFFE00000UL) - (right << 21 & 0x000003FFFFE00000UL) + (left >> 42) - (right >> 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values y as 1024 times more important than z, and x is irrelevant
+                    ((left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) + (left >> 42) - (right >> 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x as 1024 times more important than z, and y is irrelevant)), reversed for x
+                    ((right << 21 & 0x000003FFFFE00000UL) - (left << 21 & 0x000003FFFFE00000UL) + (left >> 42) - (right >> 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values y as 1024 times more important than z, and x is irrelevant)), reversed for y
+                    ((right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) + (left >> 42) - (right >> 42))),
+            //4
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x as 1024 times more important than reversed y, and z is irrelevant
+                    ((right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) + ((left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL) << 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values y as 1024 times more important than x, and z is irrelevant
+                    ((left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) + ((left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL)))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x as 1024 times more important than y, and z is irrelevant
+                    ((left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) + ((right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL) << 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed y as 1024 times more important than reversed x, and z is irrelevant
+                    ((right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) + ((right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL)))),
+            //8
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x as 1024 times more important than reversed z, and y is irrelevant
+                    ((left << 21 & 0x000003FFFFE00000UL) - (right << 21 & 0x000003FFFFE00000UL) + (right >> 42) - (left >> 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed y as 1024 times more important than reversed z, and x is irrelevant
+                    ((right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) + (right >> 42) - (left >> 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x as 1024 times more important than reversed z, and y is irrelevant)), reversed for x
+                    ((right << 21 & 0x000003FFFFE00000UL) - (left << 21 & 0x000003FFFFE00000UL) + (right >> 42) - (left >> 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values y as 1024 times more important than reversed z, and x is irrelevant
+                    ((left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) + (right >> 42) - (left >> 42))),
+            //12
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x as 1024 times more important than y, and z is irrelevant
+                    ((left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) + ((left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL) << 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values y as 1024 times more important than reversed x, and z is irrelevant
+                    ((left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) + ((right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL)))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x as 1024 times more important than reversed y, and z is irrelevant
+                    ((right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) + ((right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL) << 42))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed y as 1024 times more important than x, and z is irrelevant
+                    ((right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) + ((left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL)))),
+            //16
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values z as many times more important than x, and y is irrelevant
+                    (((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)) + ((left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL)))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values z as 1024 times more important than y, and x is irrelevant
+                    (((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)) + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values z as many times more important than reversed x, and y is irrelevant
+                    (((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)) + ((right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL)))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values z as many times more important than reversed y, and x is irrelevant
+                    (((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)) + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL))),
+            //42
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed z as many times more important than x, and y is irrelevant
+                    (((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)) + ((left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL)))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed z as 1024 times more important than y, and x is irrelevant
+                    (((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)) + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed z as many times more important than reversed x, and y is irrelevant
+                    (((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)) + ((right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL)))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed z as many times more important than reversed y, and x is irrelevant
+                    (((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)) + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL)))
+        };
+        public static readonly Comparison<ulong>[] Side45 = new Comparison<ulong>[]
+        {
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and y equally, either as 1024 times more important than z
+                    ((left >> 42) - (right >> 42)
+                            + (left << 21 & 0x000003FFFFE00000UL) - (right << 21 & 0x000003FFFFE00000UL)
+                            + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and y equally, either as 1024 times more important than z
+                    ((left >> 42) - (right >> 42)
+                            + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL)
+                            + (right << 21 & 0x000003FFFFE00000UL) - (left << 21 & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and reversed y equally, either as 1024 times more important than z
+                    ((left >> 42) - (right >> 42)
+                            + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL)
+                            + (right << 21 & 0x000003FFFFE00000UL) - (left << 21 & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and reversed y equally, either as 1024 times more important than z
+                    ((left >> 42) - (right >> 42)
+                            + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL)
+                            + (left << 21 & 0x000003FFFFE00000UL) - (right << 21 & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and z equally, either as 1024 times more important than reversed y
+                    ((left << 42 & 0x7FFFFC0000000000UL) - (right << 42 & 0x7FFFFC0000000000UL) + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) +
+                            (left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values y and z equally, either as many times more important than x
+                    ((left << 21 & 0x7FFFFC0000000000UL) - (right << 21 & 0x7FFFFC0000000000UL) + (left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL) +
+                            (left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and z equally, either as 1024 times more important than y
+                    ((right << 42 & 0x7FFFFC0000000000UL) - (left << 42 & 0x7FFFFC0000000000UL) + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) +
+                            (left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed y and z equally, either as many times more important than reversed x
+                    ((right << 21 & 0x7FFFFC0000000000UL) - (left << 21 & 0x7FFFFC0000000000UL) + (right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL) +
+                            (left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and y equally, either as 1024 times more important than reversed z
+                    ((right >> 42) - (left >> 42) +
+                            (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) +
+                            (left << 21 & 0x000003FFFFE00000UL) - (right << 21 & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and reversed y equally, either as 1024 times more important than reversed z
+                    ((right >> 42) - (left >> 42)
+                            + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL)
+                            + (left << 21 & 0x000003FFFFE00000UL) - (right << 21 & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and reversed y equally, either as 1024 times more important than reversed z
+                    ((right >> 42) - (left >> 42)
+                            + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL)
+                            + (right << 21 & 0x000003FFFFE00000UL) - (left << 21 & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and y equally, either as 1024 times more important than reversed z
+                    ((right >> 42) - (left >> 42)
+                            + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL)
+                            + (right << 21 & 0x000003FFFFE00000UL) - (left << 21 & 0x000003FFFFE00000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values y and reversed z equally, either as many times more important than x
+                    ((left << 21 & 0x7FFFFC0000000000UL) - (right << 21 & 0x7FFFFC0000000000UL) +
+                            (left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL) +
+                            (right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and reversed z equally, either as 1024 times more important than y
+                    ((right << 42 & 0x7FFFFC0000000000UL) - (left << 42 & 0x7FFFFC0000000000UL) +
+                            (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL) +
+                            (right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed y and reversed z equally, either as many times more important than reversed x
+                    ((right << 21 & 0x7FFFFC0000000000UL) - (left << 21 & 0x7FFFFC0000000000UL) +
+                            (right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL) +
+                            (right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and reversed z equally, either as 1024 times more important than reversed y
+                    ((left << 42 & 0x7FFFFC0000000000UL) - (right << 42 & 0x7FFFFC0000000000UL) +
+                            (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL) +
+                            (right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values z and y equally, either as many times more important than x
+                    ((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)
+                            + (left << 21 & 0x7FFFFC0000000000UL) - (right << 21 & 0x7FFFFC0000000000UL)
+                            + (left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and z equally, either as 1024 times more important than y
+                    ((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)
+                            + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL)
+                            + (right << 42 & 0x7FFFFC0000000000UL) - (left << 42 & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values z and reversed y equally, either as many times more important than reversed x
+                    ((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)
+                            + (right << 21 & 0x7FFFFC0000000000UL) - (left << 21 & 0x7FFFFC0000000000UL)
+                            + (right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and z equally, either as 1024 times more important than reversed y
+                    ((left & 0x7FFFFC0000000000UL) - (right & 0x7FFFFC0000000000UL)
+                            + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL)
+                            + (left << 42 & 0x7FFFFC0000000000UL) - (right << 42 & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed z and reversed y equally, either as many times more important than x
+                    ((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)
+                            + (right << 21 & 0x7FFFFC0000000000UL) - (left << 21 & 0x7FFFFC0000000000UL)
+                            + (left & 0x00000000001FFFFFUL) - (right & 0x00000000001FFFFFUL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values x and reversed z equally, either as 1024 times more important than y
+                    ((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)
+                            + (left & 0x000003FFFFE00000UL) - (right & 0x000003FFFFE00000UL)
+                            + (left << 42 & 0x7FFFFC0000000000UL) - (right << 42 & 0x7FFFFC0000000000UL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed z and y equally, either as many times more important than reversed x
+                    ((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)
+                            + (left << 21 & 0x7FFFFC0000000000UL) - (right << 21 & 0x7FFFFC0000000000UL)
+                            + (right & 0x00000000001FFFFFUL) - (left & 0x00000000001FFFFFUL))),
+            (ulong left, ulong right) => Math.Sign((long)
+                    // values reversed x and reversed z equally, either as 1024 times more important than reversed y
+                    ((right & 0x7FFFFC0000000000UL) - (left & 0x7FFFFC0000000000UL)
+                            + (right & 0x000003FFFFE00000UL) - (left & 0x000003FFFFE00000UL)
+                            + (right << 42 & 0x7FFFFC0000000000UL) - (left << 42 & 0x7FFFFC0000000000UL)))
 
+        };
     }
 }
