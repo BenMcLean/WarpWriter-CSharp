@@ -2,6 +2,7 @@ using Godot;
 using System.IO;
 using WarpWriter.Model.Fetch;
 using WarpWriter.Model.IO;
+using WarpWriter.Model.Seq;
 using WarpWriter.View;
 using WarpWriter.View.Color;
 using WarpWriter.View.Render;
@@ -31,6 +32,8 @@ public class WarpWriterDemo : Camera2D
         using (FileStream file = new FileStream("Artillery.vox", FileMode.Open))
             VoxIO.ReadVox(file, out model, out palette);
 
+        VoxelSeq seq = new VoxelSeq().PutModel(model);
+
         ByteArrayRenderer renderer = new ByteArrayRenderer()
         {
             Width = PixelCubeDraw.IsoWidth(model) * 2,
@@ -40,8 +43,8 @@ public class WarpWriterDemo : Camera2D
             {
                 Palette = new Colorizer(palette),
             },
-            ScaleX = 2,
-        }.PixelCubeIso(model);
+            ScaleX = 1,
+        }.PixelCubeIso(seq);
 
         Godot.Image image = new Image();
         image.CreateFromData((int)renderer.Width, (int)renderer.Height, false, Image.Format.Rgba8, renderer.Bytes);

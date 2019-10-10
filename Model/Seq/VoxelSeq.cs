@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using WarpWriter.Model.Fetch;
 
 namespace WarpWriter.Model.Seq
 {
@@ -26,6 +27,139 @@ namespace WarpWriter.Model.Seq
         public Dictionary<ulong, byte> Voxels { get; set; }
         public List<ulong> Full { get; set; }
         public List<ulong> Order { get; set; }
+
+        public VoxelSeq PutArray(byte[][][] voxels)
+        {
+            ulong sizeX = (ulong)(voxels.Length);
+            ulong sizeY = (ulong)(voxels[0].Length);
+            ulong sizeZ = (ulong)(voxels[0][0].Length);
+            SizeX = SizeY = SizeZ = Math.Max(sizeX, Math.Max(sizeY, sizeZ));
+            for (ulong x = 0; x < sizeX; x++)
+            {
+                for (ulong y = 0; y < sizeY; y++)
+                {
+                    for (ulong z = 0; z < sizeZ; z++)
+                    {
+                        if (voxels[x][y][z] != 0)
+                            Add(x, y, z, voxels[x][y][z]);
+                    }
+                }
+            }
+            return this;
+        }
+
+        public VoxelSeq PutSurface(byte[][][] voxels)
+        {
+            ulong sizeX = (ulong)(voxels.Length);
+            ulong sizeY = (ulong)(voxels[0].Length);
+            ulong sizeZ = (ulong)(voxels[0][0].Length);
+            SizeX = SizeY = SizeZ = Math.Max(sizeX, Math.Max(sizeY, sizeZ));
+            for (ulong y = 0; y < sizeY; y++)
+            {
+                for (ulong z = 0; z < sizeZ; z++)
+                {
+                    if (voxels[0][y][z] != 0)
+                        Add(0, y, z, voxels[0][y][z]);
+                    if (voxels[sizeX - 1][y][z] != 0)
+                        Add(sizeX - 1, y, z, voxels[sizeX - 1][y][z]);
+                }
+            }
+            for (ulong x = 1UL; x < sizeX - 1UL; x++)
+            {
+                for (ulong z = 0; z < sizeZ; z++)
+                {
+                    if (voxels[x][0][z] != 0)
+                        Add(x, 0, z, voxels[x][0][z]);
+                    if (voxels[x][sizeY - 1][z] != 0)
+                        Add(x, sizeY - 1, z, voxels[x][sizeY - 1][z]);
+                }
+                for (ulong y = 1UL; y < sizeY - 1UL; y++)
+                {
+                    if (voxels[x][y][0] != 0)
+                        Add(x, y, 0, voxels[x][y][0]);
+                    if (voxels[x][y][sizeZ - 1] != 0)
+                        Add(x, y, sizeZ - 1, voxels[x][y][sizeZ - 1]);
+                    for (ulong z = 1; z < sizeZ - 1UL; z++)
+                    {
+                        if (voxels[x][y][z] != 0 && (voxels[x - 1][y][z] == 0 || voxels[x + 1][y][z] == 0 ||
+                                voxels[x][y - 1][z] == 0 || voxels[x][y + 1][z] == 0 ||
+                                voxels[x][y][z - 1] == 0 || voxels[x][y][z + 1] == 0))
+                            Add(x, y, z, voxels[x][y][z]);
+                    }
+                }
+            }
+            Order.Clear();
+            Order.AddRange(Full);
+            return this;
+        }
+
+        /**
+         * Puts all non-empty voxels in {@code model} into this VoxelSeq, and also sets up the voxels touching empty space
+         * so they will be iterated through by some of the rendering methods, instead of needing to iterate over all voxels.
+         * @param model an IModel; the highest of its {@link IModel#sizeX()}, {@link IModel#sizeY()} and
+         *              {@link IModel#sizeZ()} will be used for all sizes to allow rotation.
+         */
+        public VoxelSeq PutModel(IModel model)
+        {
+            ulong sizeX = (ulong)(model.SizeX);
+            ulong sizeY = (ulong)(model.SizeY);
+            ulong sizeZ = (ulong)(model.SizeZ);
+            SizeX = SizeY = SizeZ = Math.Max(sizeX, Math.Max(sizeY, sizeZ));
+            byte v;
+            for (ulong x = 0; x < sizeX; x++)
+            {
+                for (ulong y = 0; y < sizeY; y++)
+                {
+                    for (ulong z = 0; z < sizeZ; z++)
+                    {
+                        v = model.At((int)x, (int)y, (int)z);
+                        if (v != 0)
+                            Add(x, y, z, v);
+                    }
+                }
+            }
+            return Hollow();
+        }
+        /**
+         * Resets the order of potentially-visible voxels as used by the rotation-related methods; since this order is not
+         * changed by normal {@link #Add(int, byte)} and {@link #remove(int)}, this method must be used to complete any
+         * changes to the structure of the VoxelSeq.
+         */
+        public VoxelSeq Hollow()
+        {
+            Order.Clear();
+            int sz = Full.Count;
+            ulong k, x, y, z;
+            for (int i = 0; i < sz; i++)
+            {
+                k = Full[i];
+                x = ExtractX(k);
+                y = ExtractY(k);
+                z = ExtractZ(k);
+                if (x <= 0 || x >= SizeX - 1 || y <= 0 || y >= SizeY - 1 || z <= 0 || z >= SizeZ - 1 ||
+                        !Voxels.ContainsKey(Fuse(x - 1, y, z)) || !Voxels.ContainsKey(Fuse(x + 1, y, z)) ||
+                        !Voxels.ContainsKey(Fuse(x, y - 1, z)) || !Voxels.ContainsKey(Fuse(x, y + 1, z)) ||
+                        !Voxels.ContainsKey(Fuse(x, y, z - 1)) || !Voxels.ContainsKey(Fuse(x, y, z + 1)))
+                    Order.Add(k);
+            }
+            return this;
+        }
+
+        public void Add(ulong x, ulong y, ulong z, byte c)
+        {
+            ulong f = Fuse(x, y, z);
+            if (Voxels.ContainsKey(f))
+            {
+                Voxels[f] = c;
+            }
+            else
+            {
+                Voxels.Add(f, c);
+                Full.Add(f);
+            }
+        }
+
+
         /**
  * Combines 3 ulong components x, y, and z, each between 0 and 2097151 inclusive, into one ulong that can be used as a key
  * in this HashMap3D. 63 of the 64 bits in the returned ulong have the potential to be used, allowing about nine million
