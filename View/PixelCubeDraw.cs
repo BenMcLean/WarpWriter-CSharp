@@ -427,7 +427,7 @@ namespace WarpWriter.View
 
         public static uint IsoHeight(IModel model)
         {
-            return (model.SizeZ +
+            return (model.SizeZ * 2 +
                     Math.Max(model.SizeX, model.SizeY)
                     ) * 4;
         }
@@ -804,8 +804,8 @@ namespace WarpWriter.View
         {
             int len = seq.Order.Count;
             ulong sizeX = seq.SizeX, sizeY = seq.SizeY, sizeZ = seq.SizeZ,
-                     pixelWidth = (sizeY + sizeX + 2) * 2 + 1,
-                     pixelHeight = (sizeX + sizeY + sizeZ + 3) * 3 + 1;
+                     pixelWidth = (sizeY + sizeX) * 2 + 5,
+                     pixelHeight = (sizeX + sizeY + sizeZ * 2) * 2 + 5;
             seq.Order.Sort(VoxelSeq.Side45[seq.Rotation]);
             for (int i = 0; i < len; i++)
             {
@@ -817,7 +817,7 @@ namespace WarpWriter.View
                              y = VoxelSeq.ExtractY(xyz),
                              z = VoxelSeq.ExtractZ(xyz),
                              xPos = (sizeY - y + x) * 2 + 1,
-                             yPos = (z + sizeX + sizeY - x - y) * 2 + 1,
+                             yPos = (z * 2 + sizeX + sizeY - x - y) * 2 + 1,
                              dep = 3 * (x + y + z) + 256;
                     renderer.DrawLeftTriangleLeftFace((int)xPos, (int)yPos, v, (int)dep, (int)x, (int)y, (int)z);
                     renderer.DrawRightTriangleLeftFace((int)xPos, (int)yPos + 2, v, (int)dep, (int)x, (int)y, (int)z);
