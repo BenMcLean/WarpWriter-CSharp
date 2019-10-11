@@ -13,7 +13,11 @@ public class WarpWriterDemo : Camera2D
     // Declare member variables here. Examples:
     // private int a = 2;
     // private string b = "text";
-
+    private VoxelSeq seq;
+    private ByteArrayRenderer renderer;
+    private Image image;
+    private ImageTexture imageTexture;
+    private Color Clear = Color.Color8(0, 0, 0, 0);
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -33,9 +37,9 @@ public class WarpWriterDemo : Camera2D
         using (FileStream file = new FileStream("Artillery.vox", FileMode.Open))
             VoxIO.ReadVox(file, out model, out palette);
 
-        VoxelSeq seq = new VoxelSeq().PutModel(model);
-        seq.ClockZ().ClockZ();
-        ByteArrayRenderer renderer = new ByteArrayRenderer()
+        seq = new VoxelSeq().PutModel(model);
+        
+        renderer = new ByteArrayRenderer()
         {
             Width = (uint)Math.Max(seq.SizeX, seq.SizeY) * 8 + 5,
             Height = PixelCubeDraw.IsoHeight(model),
@@ -49,9 +53,9 @@ public class WarpWriterDemo : Camera2D
             ScaleX = 2,
         }.PixelCubeIso(seq);
 
-        Godot.Image image = new Image();
+        image = new Image();
+        imageTexture = new ImageTexture();
         image.CreateFromData((int)renderer.Width, (int)renderer.Height, false, Image.Format.Rgba8, renderer.Bytes);
-        ImageTexture imageTexture = new ImageTexture();
         imageTexture.CreateFromImage(image, 0); //(int)Texture.FlagsEnum.ConvertToLinear);
 
         Sprite sprite = new Sprite
@@ -65,8 +69,17 @@ public class WarpWriterDemo : Camera2D
     }
 
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.
-    //  public override void _Process(float delta)
-    //  {
-    //      
-    //  }
+    public override void _Process(float delta)
+    {
+        int old = seq.Rotation;
+        seq.Rotation = System.DateTime.Now.Millisecond >> 5 & 3;
+        if(old != seq.Rotation)
+        {
+            Array.Clear(renderer.Bytes, 0, renderer.Bytes.Length);
+            renderer.PixelCubeIso(seq);
+            //image.Fill(Colors.Black);
+            image.CreateFromData((int)renderer.Width, (int)renderer.Height, false, Image.Format.Rgba8, renderer.Bytes);
+            imageTexture.CreateFromImage(image, 7);
+        }
+    }
 }
