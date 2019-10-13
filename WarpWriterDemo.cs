@@ -51,7 +51,7 @@ public class WarpWriterDemo : Camera2D
             {
                 Palette = new Colorizer(palette),
             },
-            ScaleX = 2,
+            //ScaleX = 2,
         }.PixelCubeIso(seq);
 
         image = new Image();
@@ -73,7 +73,7 @@ public class WarpWriterDemo : Camera2D
     public override void _Process(float delta)
     {
         int old = Rotation;
-        Rotation = System.DateTime.Now.Millisecond + System.DateTime.Now.Second * 1000 >> 9 & 7;
+        Rotation = (int)(System.DateTime.Now.ToBinary() >> 21 & 7);
         if(old != Rotation)
         {
             seq.Rotation = Rotation >> 1;
