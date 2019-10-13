@@ -49,11 +49,12 @@ public class WarpWriterDemo : Camera2D
             OffsetY = 4,
             Color = new ShadedVoxelColor()
             {
-                Palette = new Colorizer(palette),
+                //Palette = new Colorizer(PaletteReducer.RELAXED_ROLL, false),
+                Palette = new Colorizer(palette, true),
             },
             //ScaleX = 2,
         }.PixelCubeIso(seq);
-
+        //Console.WriteLine("palette[30]: {0:X}", palette[30]);
         image = new Image();
         imageTexture = new ImageTexture();
         image.CreateFromData((int)renderer.Width, (int)renderer.Height, false, Image.Format.Rgba8, renderer.Bytes);

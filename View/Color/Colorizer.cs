@@ -15,9 +15,21 @@ namespace WarpWriter.View.Color
         public byte[] Primary;
         public byte[] Grays;
         public PaletteReducer Reducer;
-        public Colorizer(uint[] palette)
+        
+        public Colorizer() : this(PaletteReducer.LAZY_ROLL, true)
         {
-            Count = palette.Length;
+        }
+        public Colorizer(uint[] palette, bool reverseColors)
+        {
+            Count = Math.Min(palette.Length, 256);
+            if (reverseColors)
+            {
+                for (int i = 0; i < Count; i++)
+                {
+                    uint clr = palette[i];
+                    palette[i] = clr << 24 | (clr << 8 & 0xFF0000u) | (clr >> 8 & 0xFF00u) | clr >> 24;
+                }
+            }
             Reducer = new PaletteReducer(palette);
 
             Primary = new byte[] {
@@ -25,8 +37,8 @@ namespace WarpWriter.View.Color
                 Reducer.ReduceIndex(0x00FFFFFF), Reducer.ReduceIndex(0x0000FFFF), Reducer.ReduceIndex(0xFF00FFFF)
             };
             Grays = new byte[] {
-                Reducer.ReduceIndex(0xFF000000), Reducer.ReduceIndex(0xFF444444), Reducer.ReduceIndex(0xFF888888),
-                Reducer.ReduceIndex(0xFFCCCCCC), Reducer.ReduceIndex(0xFFFFFFFF)
+                Reducer.ReduceIndex(0x000000FF), Reducer.ReduceIndex(0x444444FF), Reducer.ReduceIndex(0x888888FF),
+                Reducer.ReduceIndex(0xCCCCCCFF), Reducer.ReduceIndex(0xFFFFFFFF)
             };
             int THRESHOLD = 64;//0.011; // threshold controls the "stark-ness" of color changes; must not be negative.
             byte[] paletteMapping = new byte[1 << 16];
