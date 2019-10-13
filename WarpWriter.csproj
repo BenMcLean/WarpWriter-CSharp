@@ -68,6 +68,7 @@
     <Compile Include="View\Color\IVoxelColor.cs" />
     <Compile Include="View\Color\PaletteReducer.cs" />
     <Compile Include="View\Color\ShadedVoxelColor.cs" />
+    <Compile Include="View\IsoFlatDraw.cs" />
     <Compile Include="View\PixelCubeDraw.cs" />
     <Compile Include="View\Render\ByteArrayRenderer.cs" />
     <Compile Include="View\Render\IRectangleRenderer.cs" />
