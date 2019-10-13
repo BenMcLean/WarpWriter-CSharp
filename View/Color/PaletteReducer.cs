@@ -57,22 +57,34 @@ namespace WarpWriter.View.Color
 
         public PaletteReducer()
         {
-            Exact(null);
+            Exact(null, true);
         }
 
         public PaletteReducer(uint[] palette)
         {
-            Exact(palette);
+            Exact(palette, false);
         }
 
-        public void Exact(uint[] rgbaPalette)
+        public PaletteReducer(uint[] palette, bool reverseColors)
+        {
+            Exact(palette, reverseColors);
+        }
+
+        public void Exact(uint[] rgbaPalette, bool reverseColors)
         {
             if (rgbaPalette == null || rgbaPalette.Length < 2)
             {
                 rgbaPalette = new uint[RELAXED_ROLL.Length];
                 for(int i = 0; i < RELAXED_ROLL.Length; i++)
                 {
-                    uint clr = RELAXED_ROLL[i];
+                    rgbaPalette[i] = RELAXED_ROLL[i];
+                }
+            }
+            if(reverseColors)
+            {
+                for(int i = 0; i < rgbaPalette.Length; i++)
+                {
+                    uint clr = rgbaPalette[i];
                     rgbaPalette[i] = clr << 24 | (clr << 8 & 0xFF0000u) | (clr >> 8 & 0xFF00u) | clr >> 24;
                 }
             }
@@ -86,7 +98,7 @@ namespace WarpWriter.View.Color
                 color = rgbaPalette[i];
                 
                 PaletteArray[i] = color;
-                PaletteMapping[(color >> 17 & 0x7C00) | (color >> 14 & 0x3E0) | (color >> 11 & 0x1F)] = (byte)i;
+                PaletteMapping[(color >> 9 & 0x7C00) | (color >> 6 & 0x3E0) | (color >> 3 & 0x1F)] = (byte)i;
             }
             uint rr, gg, bb;
             for (uint r = 0; r < 32; r++)
@@ -97,7 +109,7 @@ namespace WarpWriter.View.Color
                     gg = (g << 3 | g >> 2);
                     for (uint b = 0; b < 32; b++)
                     {
-                        c2 = r << 10 | g << 5 | b;
+                        c2 = b << 10 | g << 5 | r;
                         if (PaletteMapping[c2] == 0)
                         {
                             bb = (b << 3 | b >> 2);
@@ -115,14 +127,14 @@ namespace WarpWriter.View.Color
 
         public double Difference(uint rgba1, uint r2, uint g2, uint b2)
         {
-            if ((rgba1 & 0x80) == 0) return Double.PositiveInfinity;
-            return Difference((rgba1 >> 24), (rgba1 >> 16 & 0xFF), (rgba1 >> 8 & 0xFF), r2, g2, b2);
+            if ((rgba1 & 0x80000000) == 0) return Double.PositiveInfinity;
+            return Difference((rgba1 & 0xFF), (rgba1 >> 8 & 0xFF), (rgba1 >> 16 & 0xFF), r2, g2, b2);
         }
 
         public double Difference(uint r1, uint g1, uint b1, uint r2, uint g2, uint b2)
         {
             double rmean = (r1 + r2),
-                r = r1 - r2, g = (g1 - g2) * 2.0, b = b1 - b2,
+                r = (double)r1 - r2, g = ((double)g1 - g2) * 2.0, b = (double)b1 - b2,
                 y = Math.Max(r1, Math.Max(g1, b1)) - Math.Max(r2, Math.Max(g2, b2));
             return (((1024 + rmean) * r * r) / 128.0) + g * g * 12 + (((1534 - rmean) * b * b) / 256.0) + y * y * 14;
 
@@ -198,12 +210,12 @@ namespace WarpWriter.View.Color
          */
         public uint ReduceSingle(uint color)
         {
-            if ((color & 0x80) == 0) // less visible than half-transparent
+            if ((color & 0x80000000U) == 0U) // less visible than half-transparent
                 return 0; // transparent
             return PaletteArray[PaletteMapping[
-                    (color >> 17 & 0x7C00)
-                            | (color >> 14 & 0x3E0)
-                            | (color >> 11 & 0x1F)] & 0xFF];
+                    (color >> 9 & 0x7C00)
+                            | (color >> 6 & 0x3E0)
+                            | (color >> 3 & 0x1F)] & 0xFF];
         }
 
         /**
@@ -215,12 +227,21 @@ namespace WarpWriter.View.Color
          */
         public byte ReduceIndex(uint color)
         {
-            if ((color & 0x80) == 0) // less visible than half-transparent
+            if ((color & 0x80000000U) == 0U) // less visible than half-transparent
                 return 0; // transparent
             return PaletteMapping[
-                    (color >> 17 & 0x7C00)
-                            | (color >> 14 & 0x3E0)
-                            | (color >> 11 & 0x1F)];
+                    (color >> 9 & 0x7C00)
+                            | (color >> 6 & 0x3E0)
+                            | (color >> 3 & 0x1F)];
+        }
+
+        public uint[] ReduceAll(uint[] otherPalette)
+        {
+            for(int i = 0; i < otherPalette.Length; i++)
+            {
+                otherPalette[i] = ReduceSingle(otherPalette[i]);
+            }
+            return otherPalette;
         }
 
     }

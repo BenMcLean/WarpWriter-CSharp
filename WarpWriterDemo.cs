@@ -49,8 +49,8 @@ public class WarpWriterDemo : Camera2D
             OffsetY = 4,
             Color = new ShadedVoxelColor()
             {
-                //Palette = new Colorizer(PaletteReducer.RELAXED_ROLL, false),
-                Palette = new Colorizer(palette, true),
+                //Palette = new Colorizer(PaletteReducer.RELAXED_ROLL, true),
+                Palette = new Colorizer(new PaletteReducer(PaletteReducer.LAZY_ROLL, true).ReduceAll(palette), false),
             },
             //ScaleX = 2,
         }.PixelCubeIso(seq);

@@ -114,11 +114,11 @@ namespace WarpWriter.Model.IO
                 }
             }
             //// not needed any more
-            for(int i = 0; i < 256;i++)
-            {
-                uint u = palette[i];
-                palette[i] = u << 24 | (u << 8 & 0xFF0000u) | (u >> 8 & 0xFF00u) | u >> 24;
-            }
+            //for(int i = 0; i < 256;i++)
+            //{
+            //    uint u = palette[i];
+            //    palette[i] = u << 24 | (u << 8 & 0xFF0000u) | (u >> 8 & 0xFF00u) | u >> 24;
+            //}
         }
 
         public static void ReadVox(Stream stream, out ArrayModel model, out uint[] palette)

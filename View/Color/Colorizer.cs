@@ -27,6 +27,7 @@ namespace WarpWriter.View.Color
                 for (int i = 0; i < Count; i++)
                 {
                     uint clr = palette[i];
+                    //Console.WriteLine("Original Palette {0:D}: {1:X}", i, clr);
                     palette[i] = clr << 24 | (clr << 8 & 0xFF0000u) | (clr >> 8 & 0xFF00u) | clr >> 24;
                 }
             }
@@ -56,12 +57,11 @@ namespace WarpWriter.View.Color
             {
                 color = palette[i];
                 if ((color & 0x80000000) == 0)
-                {
-                    color |= 0xFF000000;
-                }
+                    color |= 0xFF000000U;
                 r = (int)(color & 0xFF);
                 g = (int)(color >> 8 & 0xFF);
                 b = (int)(color >> 16 & 0xFF);
+
                 cw = r - b;
                 cm = g - b;
                 paletteMapping[
