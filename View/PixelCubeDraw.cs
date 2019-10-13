@@ -794,6 +794,43 @@ namespace WarpWriter.View
             }
         }
 
+        public static T PixelCubeAbove<T>(this T renderer, VoxelSeq seq) where T : IRectangleRenderer<T>
+        {
+            PixelCubeAbove(seq, renderer);
+            return renderer;
+        }
+
+        public static void PixelCubeAbove<T>(VoxelSeq seq, T renderer) where T : IRectangleRenderer<T>
+        {
+            int len = seq.Order.Count;
+            int sizeX = (int)seq.SizeX, sizeY = (int)seq.SizeY, sizeZ = (int)seq.SizeZ,
+                     pixelWidth = (sizeY + sizeX) * 2 + 5,
+                     pixelHeight = (sizeX + sizeY + sizeZ * 2) * 2 + 5, 
+                     offsetPX = (int)(sizeY / 2) + 1,
+                     offsetPY = (int)(sizeX / 2) + 1;
+            seq.Order.Sort(VoxelSeq.Side[seq.Rotation]);
+
+            byte v;
+            for (int i = 0; i < len; i++)
+            {
+                v = seq.GetAtHollow(i);
+                if (v != 0)
+                {
+                    ulong xyz = seq.KeyAtRotatedHollow(i);
+                    int
+                        x = (int)VoxelSeq.ExtractX(xyz),
+                        y = (int)VoxelSeq.ExtractY(xyz),
+                        z = (int)VoxelSeq.ExtractZ(xyz),
+                        dep = (1500 + z * 8 + x * 5),
+                        xPos = ((sizeY - y) * 3 + offsetPX),
+                        yPos = (z * 2 + (sizeX - x) * 3 + offsetPY);
+                    renderer.RectRight(xPos, yPos, 3, 2, v, dep, x, y, z);
+                    //if (z >= sizeZ - 1 || seq.getRotated(x, y, z + 1) == 0)
+                    renderer.RectVertical(xPos, yPos + 2, 3, 3, v, dep, x, y, z);
+                }
+            }
+        }
+
         public static T PixelCubeIso<T>(this T renderer, VoxelSeq seq) where T : ITriangleRenderer<T>
         {
             PixelCubeIso(seq, renderer);

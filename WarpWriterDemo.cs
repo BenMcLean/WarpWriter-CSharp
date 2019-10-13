@@ -18,6 +18,7 @@ public class WarpWriterDemo : Camera2D
     private Image image;
     private ImageTexture imageTexture;
     private Color Clear = Color.Color8(0, 0, 0, 0);
+    private int Rotation = 0;
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
@@ -71,12 +72,16 @@ public class WarpWriterDemo : Camera2D
     //  // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(float delta)
     {
-        int old = seq.Rotation;
-        seq.Rotation = System.DateTime.Now.Millisecond >> 5 & 3;
-        if(old != seq.Rotation)
+        int old = Rotation;
+        Rotation = System.DateTime.Now.Millisecond + System.DateTime.Now.Second * 1000 >> 9 & 7;
+        if(old != Rotation)
         {
+            seq.Rotation = Rotation >> 1;
             Array.Clear(renderer.Bytes, 0, renderer.Bytes.Length);
-            renderer.PixelCubeIso(seq);
+            if (1 == (Rotation & 1))
+                renderer.PixelCubeIso(seq);
+            else
+                renderer.PixelCubeAbove(seq);
             //image.Fill(Colors.Black);
             image.CreateFromData((int)renderer.Width, (int)renderer.Height, false, Image.Format.Rgba8, renderer.Bytes);
             imageTexture.CreateFromImage(image, 7);
