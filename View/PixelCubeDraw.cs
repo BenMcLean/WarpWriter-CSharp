@@ -47,7 +47,7 @@ namespace WarpWriter.View
                         byte v = model.At(x, y, z);
                         if (v != 0)
                         {
-                            renderer.RectRight(y * scaleX, z * scaleY, scaleX, scaleY, v);
+                            renderer.RectRight(y * scaleX, z * scaleY, scaleX, scaleY, v, 3 * (x - y), x, y, z);
                             break;
                         }
                     }
@@ -84,9 +84,9 @@ namespace WarpWriter.View
                         byte v = model.At(x, y, z);
                         if (v != 0)
                         {
-                            renderer.RectRight(y * scaleX, z * scaleY, scaleX, scaleY, v);
+                            renderer.RectRight(y * scaleX, z * scaleY, scaleX, scaleY, v, 3 * (x - y), x, y, z);
                             if (z >= sizeZ - 1 || model.At(x, y, z + 1) == 0)
-                                renderer.RectVertical(y * scaleX, (z + 1) * scaleY - 1, scaleX, 1, v);
+                                renderer.RectVertical(y * scaleX, (z + 1) * scaleY - 1, scaleX, 1, v, 3 * (x - y) - 2, x, y, z);
                             break;
                         }
                     }
@@ -123,7 +123,7 @@ namespace WarpWriter.View
                         byte v = model.At(x, y, z);
                         if (v != 0)
                         {
-                            renderer.RectLeft(y * scaleX, z * scaleY, scaleX, scaleY, v);
+                            renderer.RectLeft(y * scaleX, z * scaleY, scaleX, scaleY, v, 3 * (x - y), x, y, z);
                             break;
                         }
                     }
@@ -245,7 +245,7 @@ namespace WarpWriter.View
                             v = model.At(vx, vy - 1, py);
                             if (v != 0)
                             {
-                                renderer.RectRight(px * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectRight(px * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx + 1 - vy), vx, vy-1, py);
                                 leftDone = true;
                             }
                         }
@@ -254,7 +254,7 @@ namespace WarpWriter.View
                             v = model.At(vx - 1, vy, py);
                             if (v != 0)
                             {
-                                renderer.RectLeft((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectLeft((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx - 1 - vy), vx - 1, vy, py);
                                 rightDone = true;
                             }
                         }
@@ -263,9 +263,9 @@ namespace WarpWriter.View
                         if (v != 0)
                         {
                             if (!leftDone)
-                                renderer.RectLeft(px * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectLeft(px * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx - vy), vx, vy, py);
                             if (!rightDone)
-                                renderer.RectRight((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectRight((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx - vy), vx, vy, py);
                             break;
                         }
                     }
@@ -313,9 +313,9 @@ namespace WarpWriter.View
                             v = model.At(vx, vy - 1, py);
                             if (v != 0)
                             {
-                                renderer.RectRight(px * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectRight(px * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx + 1 - vy), vx, vy - 1, py);
                                 if (py >= sizeZ - 1 || model.At(vx, vy - 1, py + 1) == 0)
-                                    renderer.RectVertical(px * scaleX, (py + 1) * scaleY - 1, scaleX, 1, v);
+                                    renderer.RectVertical(px * scaleX, (py + 1) * scaleY - 1, scaleX, 1, v, 3 * (vx + 1 - vy) - 2, vx, vy - 1, py);
                                 leftDone = true;
                             }
                         }
@@ -324,9 +324,9 @@ namespace WarpWriter.View
                             v = model.At(vx - 1, vy, py);
                             if (v != 0)
                             {
-                                renderer.RectLeft((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectLeft((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx - 1 - vy), vx-1, vy, py);
                                 if (py >= sizeZ - 1 || model.At(vx - 1, vy, py + 1) == 0)
-                                    renderer.RectVertical((px + 1) * scaleX, (py + 1) * scaleY - 1, scaleX, 1, v);
+                                    renderer.RectVertical((px + 1) * scaleX, (py + 1) * scaleY - 1, scaleX, 1, v, 3 * (vx - 1 - vy), vx-1, vy, py);
                                 rightDone = true;
                             }
                         }
@@ -337,15 +337,15 @@ namespace WarpWriter.View
                             bool peek = py >= sizeZ - 1 || model.At(vx, vy, py + 1) == 0;
                             if (!leftDone)
                             {
-                                renderer.RectLeft(px * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectLeft(px * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx - vy), vx, vy, py);
                                 if (peek)
                                     renderer.RectVertical(px * scaleX, (py + 1) * scaleY - 1, scaleX, 1, v);
                             }
                             if (!rightDone)
                             {
-                                renderer.RectRight((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v);
+                                renderer.RectRight((px + 1) * scaleX, py * scaleY, scaleX, scaleY, v, 3 * (vx - vy), vx, vy, py);
                                 if (peek)
-                                    renderer.RectVertical((px + 1) * scaleX, (py + 1) * scaleY - 1, scaleX, 1, v);
+                                    renderer.RectVertical((px + 1) * scaleX, (py + 1) * scaleY - 1, scaleX, 1, v, 3 * (vx - vy), vx, vy, py);
                             }
                             break;
                         }
@@ -373,56 +373,77 @@ namespace WarpWriter.View
 
         public static void PixelCubeAbove<T>(IModel model, T renderer, int scaleX, int scaleY) where T : IRectangleRenderer<T>
         {
-            int sizeX = (int)model.SizeX,
-                    sizeY = (int)model.SizeY,
-                    sizeZ = (int)model.SizeZ,
-                    pixelHeight = (sizeX + sizeZ) * 2;
-            for (int vy = 0; vy < sizeY; vy++)
-            { // voxel y is pixel x
-              // Begin bottom row
-                byte v = model.At(0, vy, 0);
-                if (v != 0) renderer.RectRight(vy * scaleX, 0, scaleX, scaleY, v);
-                // Finish bottom row
-                // Begin main bulk of model
-                for (int py = 1; py < pixelHeight; py += 2)
-                { // pixel y
-                    bool below = false, above = pixelHeight - py < 2;
-                    int startX = (py / 2) > sizeZ - 1 ? (py / 2) - sizeZ + 1 : 0,
-                            startZ = (py / 2) > sizeZ - 1 ? sizeZ - 1 : (py / 2);
-                    for (int vx = startX, vz = startZ;
-                         vx <= sizeX && vz >= -1;
-                         vx++, vz--)
-                    { // vx is voxel x, vz is voxel z
-                        if (!above && vz + 1 < sizeZ && vx < sizeX)
-                        {
-                            v = model.At(vx, vy, vz + 1);
-                            if (v != 0)
-                            {
-                                renderer.RectRight(vy * scaleX, (py + 1) * scaleY, scaleX, scaleY, v);
-                                above = true;
-                            }
-                        }
-                        if (!below && vx > 0 && vz >= 0)
-                        {
-                            v = model.At(vx - 1, vy, vz);
-                            if (v != 0)
-                            {
-                                renderer.RectVertical(vy * scaleX, py * scaleY, scaleX, scaleY, v);
-                                below = true;
-                            }
-                        }
-                        if ((above && below) || vx >= sizeX || vz < 0) break;
-                        v = model.At(vx, vy, vz);
+            int sizeX = (int)model.SizeX - 1,
+                    sizeY = (int)model.SizeY - 1,
+                    sizeZ = (int)model.SizeZ - 1,
+                    offsetPX = (sizeY >> 1) + 1, offsetPY = (sizeX >> 1) + 1,
+                    pixelWidth = (sizeY * 3) + (sizeY >> 1) + 6,
+                    pixelHeight = sizeZ * 2 + sizeX * 3 + offsetPY + 7;
+            for (int z = 0; z <= sizeZ; z++)
+            {
+                for (int y = 0; y <= sizeY; y++)
+                {
+                    for (int x = 0, d = 0; x <= sizeX; x++, d += 5)
+                    {
+                        byte v = model.At(x, y, z);
                         if (v != 0)
                         {
-                            if (!above) renderer.RectVertical(vy * scaleX, (py + 1) * scaleY, scaleX, scaleY, v);
-                            if (!below) renderer.RectRight(vy * scaleX, py * scaleY, scaleX, scaleY, v);
-                            break;
+                            int xPos = (sizeY - y) * 3 + offsetPX, yPos = z * 2 + (sizeX - x) * 3 + offsetPY;
+                            renderer.RectRight(xPos, yPos, 3, 2, v, z * 8 - d, x, y, z);
+                            if (z >= sizeZ - 1 || model.At(x, y, z + 1) == 0)
+                            {
+                                renderer.RectVertical(xPos, yPos + 3, 3, 3, v, 4 + z * 8 - d, x, y, z);
+                            }
                         }
                     }
                 }
-                // Finish main bulk of model
             }
+
+            //for (int vy = 0; vy < sizeY; vy++)
+            //{ // voxel y is pixel x
+            //  // Begin bottom row
+            //    byte v = model.At(0, vy, 0);
+            //    if (v != 0) renderer.RectRight(vy * scaleX, 0, scaleX, scaleY, v);
+            //    // Finish bottom row
+            //    // Begin main bulk of model
+            //    for (int py = 1; py < pixelHeight; py += 2)
+            //    { // pixel y
+            //        bool below = false, above = pixelHeight - py < 2;
+            //        int startX = (py / 2) > sizeZ - 1 ? (py / 2) - sizeZ + 1 : 0,
+            //                startZ = (py / 2) > sizeZ - 1 ? sizeZ - 1 : (py / 2);
+            //        for (int vx = startX, vz = startZ;
+            //             vx <= sizeX && vz >= -1;
+            //             vx++, vz--)
+            //        { // vx is voxel x, vz is voxel z
+            //            if (!above && vz + 1 < sizeZ && vx < sizeX)
+            //            {
+            //                v = model.At(vx, vy, vz + 1);
+            //                if (v != 0)
+            //                {
+            //                    renderer.RectRight(vy * scaleX, (py + 1) * scaleY, scaleX, scaleY, v);
+            //                    above = true;
+            //                }
+            //            }
+            //            if (!below && vx > 0 && vz >= 0)
+            //            {
+            //                v = model.At(vx - 1, vy, vz);
+            //                if (v != 0)
+            //                {
+            //                    renderer.RectVertical(vy * scaleX, py * scaleY, scaleX, scaleY, v);
+            //                    below = true;
+            //                }
+            //            }
+            //            if ((above && below) || vx >= sizeX || vz < 0) break;
+            //            v = model.At(vx, vy, vz);
+            //            if (v != 0)
+            //            {
+            //                if (!above) renderer.RectVertical(vy * scaleX, (py + 1) * scaleY, scaleX, scaleY, v);
+            //                if (!below) renderer.RectRight(vy * scaleX, py * scaleY, scaleX, scaleY, v);
+            //                break;
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public static uint IsoHeight(IModel model)

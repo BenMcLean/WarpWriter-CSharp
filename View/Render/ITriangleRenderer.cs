@@ -6,13 +6,13 @@
         /// Draws a triangle 3 high and 2 wide pointing left
         /// </summary>
         /// <returns>this</returns>
-        T DrawLeftTriangle(int x, int y, uint color);
+        T DrawLeftTriangle(int x, int y, uint color, int depth);
 
         /// <summary>
         /// Draws a triangle 3 high and 2 wide pointing right
         /// </summary>
         /// <returns>this</returns>
-        T DrawRightTriangle(int x, int y, uint color);
+        T DrawRightTriangle(int x, int y, uint color, int depth);
 
         /// <summary>
         /// Draws a triangle 3 high and 2 wide pointing left, representing the visible vertical face of voxel

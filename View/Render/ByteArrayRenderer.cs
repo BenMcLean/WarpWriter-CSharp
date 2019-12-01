@@ -13,6 +13,9 @@ namespace WarpWriter.View.Render
         public int OffsetX { get; set; } = 0;
         public int OffsetY { get; set; } = 0;
         public byte[] Bytes { get; set; }
+        internal byte[] Working { get; set; }
+        public int[] Depths { get; set; }
+        public byte[] Outlines { get; set; }
         public uint Width { get; set; } = 0;
         public uint Height
         {
@@ -23,25 +26,34 @@ namespace WarpWriter.View.Render
             set
             {
                 Bytes = new byte[Width * value * 4];
+                Working = new byte[Bytes.Length];
+                Outlines = new byte[Bytes.Length];
+                Depths = new int[Width * value];
             }
         }
 
-        public ByteArrayRenderer DrawPixel(int x, int y, uint color)
+        public ByteArrayRenderer DrawPixel(int x, int y, uint color, int depth)
         {
             uint height = Height;
             if (x >= 0 && x < Width && y >= 0 && y < height)
             {
-                uint start = (uint)((height - y - 1) * Width + x) * 4;
-                Bytes[start] = (byte)(color);
-                Bytes[start + 1] = (byte)(color >> 8);
-                Bytes[start + 2] = (byte)(color >> 16);
-                Bytes[start + 3] = Transparency;
+                uint start = (uint)((height - y - 1) * Width + x);
+                Depths[start] = depth;
+                start *= 4;
+                Working[start] = (byte)(color);
+                Working[start + 1] = (byte)(color >> 8);
+                Working[start + 2] = (byte)(color >> 16);
+                Working[start + 3] = Transparency;
+                Outlines[start] = (byte)(color >> 1 & 0x7F);
+                Outlines[start + 1] = (byte)(color >> 9 & 0x7F);
+                Outlines[start + 2] = (byte)(color >> 17 & 0x7F);
+                Outlines[start + 3] = Transparency;
             }
             return this;
         }
 
         #region IRectangleRenderer
-        public ByteArrayRenderer Rect(int x, int y, int sizeX, int sizeY, uint color)
+        public ByteArrayRenderer Rect(int x, int y, int sizeX, int sizeY, uint color, int depth)
         {
             x = ScaleX * (FlipX ? -x : x) + OffsetX;
             y = ScaleY * (FlipY ? -y : y) + OffsetY;
@@ -66,7 +78,7 @@ namespace WarpWriter.View.Render
             }
             for (x = startX; x < endX; x++)
                 for (y = startY; y < endY; y++)
-                    DrawPixel(x, y, color);
+                    DrawPixel(x, y, color, depth);
             return this;
         }
 
@@ -76,7 +88,8 @@ namespace WarpWriter.View.Render
                 FlipX ?
                     Color.RightFace(voxel)
                     : Color.LeftFace(voxel)
-            );
+                    , 0
+                    );
         }
 
         public ByteArrayRenderer RectLeft(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
@@ -85,6 +98,7 @@ namespace WarpWriter.View.Render
                 FlipX ?
                     Color.RightFace(voxel, vx, vy, vz)
                     : Color.LeftFace(voxel, vx, vy, vz)
+                    , depth
             );
         }
 
@@ -94,6 +108,7 @@ namespace WarpWriter.View.Render
                 FlipX ?
                     Color.LeftFace(voxel)
                     : Color.RightFace(voxel)
+                    , 0
             );
         }
 
@@ -103,25 +118,26 @@ namespace WarpWriter.View.Render
                 FlipX ?
                     Color.LeftFace(voxel, vx, vy, vz)
                     : Color.RightFace(voxel, vx, vy, vz)
+                    , depth
             );
         }
 
         public ByteArrayRenderer RectVertical(int x, int y, int sizeX, int sizeY, byte voxel)
         {
-            return Rect(x, y, sizeX, sizeY, Color.VerticalFace(voxel));
+            return Rect(x, y, sizeX, sizeY, Color.VerticalFace(voxel), -1);
         }
 
         public ByteArrayRenderer RectVertical(int px, int py, int sizeX, int sizeY, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return Rect(px, py, sizeX, sizeY, Color.VerticalFace(voxel, vx, vy, vz));
+            return Rect(px, py, sizeX, sizeY, Color.VerticalFace(voxel, vx, vy, vz), depth);
         }
         #endregion
 
         #region ITriangleRenderer
-        public ByteArrayRenderer DrawLeftTriangle(int x, int y, uint color)
+        public ByteArrayRenderer DrawLeftTriangle(int x, int y, uint color, int depth)
         {
-            return Rect(x + 1, y, 1, 3, color)
-                .Rect(x, y + 1, 1, 1, color);
+            return Rect(x + 1, y, 1, 3, color, depth)
+                .Rect(x, y + 1, 1, 1, color, depth);
         }
 
         public ByteArrayRenderer DrawLeftTriangleLeftFace(int x, int y, byte voxel, int vx, int vy, int vz)
@@ -130,13 +146,18 @@ namespace WarpWriter.View.Render
                 Color.RightFace(voxel, vx, vy, vz)
                 : Color.LeftFace(voxel, vx, vy, vz);
             return FlipX ?
-                DrawRightTriangle(x, y, color)
-                : DrawLeftTriangle(x, y, color);
+                DrawRightTriangle(x, y, color, 0)
+                : DrawLeftTriangle(x, y, color, 0);
         }
 
         public ByteArrayRenderer DrawLeftTriangleLeftFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return DrawLeftTriangleLeftFace(x, y, voxel, vx, vy, vz);
+            uint color = FlipX ?
+                Color.RightFace(voxel, vx, vy, vz)
+                : Color.LeftFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawRightTriangle(x, y, color, depth)
+                : DrawLeftTriangle(x, y, color, depth);
         }
 
         public ByteArrayRenderer DrawLeftTriangleRightFace(int x, int y, byte voxel, int vx, int vy, int vz)
@@ -145,32 +166,40 @@ namespace WarpWriter.View.Render
                 Color.LeftFace(voxel, vx, vy, vz)
                 : Color.RightFace(voxel, vx, vy, vz);
             return FlipX ?
-                DrawRightTriangle(x, y, color)
-                : DrawLeftTriangle(x, y, color);
+                DrawRightTriangle(x, y, color, 0)
+                : DrawLeftTriangle(x, y, color, 0);
         }
 
         public ByteArrayRenderer DrawLeftTriangleRightFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return DrawLeftTriangleRightFace(x, y, voxel, vx, vy, vz);
+            uint color = FlipX ?
+                Color.LeftFace(voxel, vx, vy, vz)
+                : Color.RightFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawRightTriangle(x, y, color, depth)
+                : DrawLeftTriangle(x, y, color, depth);
         }
 
         public ByteArrayRenderer DrawLeftTriangleVerticalFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
             uint color = Color.VerticalFace(voxel, vx, vy, vz);
             return FlipX ?
-                DrawRightTriangle(x, y, color)
-                : DrawLeftTriangle(x, y, color);
+                DrawRightTriangle(x, y, color, 0)
+                : DrawLeftTriangle(x, y, color, 0);
         }
 
         public ByteArrayRenderer DrawLeftTriangleVerticalFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return DrawLeftTriangleVerticalFace(x, y, voxel, vx, vy, vz);
+            uint color = Color.VerticalFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawRightTriangle(x, y, color, depth)
+                : DrawLeftTriangle(x, y, color, depth);
         }
 
-        public ByteArrayRenderer DrawRightTriangle(int x, int y, uint color)
+        public ByteArrayRenderer DrawRightTriangle(int x, int y, uint color, int depth)
         {
-            return Rect(x, y, 1, 3, color)
-                .Rect(x + 1, y + 1, 1, 1, color);
+            return Rect(x, y, 1, 3, color, depth)
+                .Rect(x + 1, y + 1, 1, 1, color, depth);
         }
 
         public ByteArrayRenderer DrawRightTriangleLeftFace(int x, int y, byte voxel, int vx, int vy, int vz)
@@ -179,13 +208,18 @@ namespace WarpWriter.View.Render
                 Color.RightFace(voxel, vx, vy, vz)
                 : Color.LeftFace(voxel, vx, vy, vz);
             return FlipX ?
-                DrawLeftTriangle(x, y, color)
-                : DrawRightTriangle(x, y, color);
+                DrawLeftTriangle(x, y, color, 0)
+                : DrawRightTriangle(x, y, color, 0);
         }
 
         public ByteArrayRenderer DrawRightTriangleLeftFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return DrawRightTriangleLeftFace(x, y, voxel, vx, vy, vz);
+            uint color = FlipX ?
+                Color.RightFace(voxel, vx, vy, vz)
+                : Color.LeftFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawLeftTriangle(x, y, color, depth)
+                : DrawRightTriangle(x, y, color, depth);
         }
 
         public ByteArrayRenderer DrawRightTriangleRightFace(int x, int y, byte voxel, int vx, int vy, int vz)
@@ -194,26 +228,34 @@ namespace WarpWriter.View.Render
                 Color.LeftFace(voxel, vx, vy, vz)
                 : Color.RightFace(voxel, vx, vy, vz);
             return FlipX ?
-                DrawLeftTriangle(x, y, color)
-                : DrawRightTriangle(x, y, color);
+                DrawLeftTriangle(x, y, color, 0)
+                : DrawRightTriangle(x, y, color, 0);
         }
 
         public ByteArrayRenderer DrawRightTriangleRightFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return DrawRightTriangleRightFace(x, y, voxel, vx, vy, vz);
+            uint color = FlipX ?
+                Color.LeftFace(voxel, vx, vy, vz)
+                : Color.RightFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawLeftTriangle(x, y, color, depth)
+                : DrawRightTriangle(x, y, color, depth);
         }
 
         public ByteArrayRenderer DrawRightTriangleVerticalFace(int x, int y, byte voxel, int vx, int vy, int vz)
         {
             uint color = Color.VerticalFace(voxel, vx, vy, vz);
             return FlipX ?
-                DrawLeftTriangle(x, y, color)
-                : DrawRightTriangle(x, y, color);
+                DrawLeftTriangle(x, y, color, -1)
+                : DrawRightTriangle(x, y, color, -1);
         }
 
         public ByteArrayRenderer DrawRightTriangleVerticalFace(int x, int y, byte voxel, int depth, int vx, int vy, int vz)
         {
-            return DrawRightTriangleVerticalFace(x, y, voxel, vx, vy, vz);
+            uint color = Color.VerticalFace(voxel, vx, vy, vz);
+            return FlipX ?
+                DrawLeftTriangle(x, y, color, depth)
+                : DrawRightTriangle(x, y, color, depth);
         }
         #endregion
     }

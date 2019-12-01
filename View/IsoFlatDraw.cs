@@ -16,7 +16,8 @@ namespace WarpWriter.WarpWriter.View
                         xOffset + (x - y) * 2,
                         (x + y),
                         2, 2,
-                        palette[indexes[x][y]]
+                        palette[indexes[x][y]],
+                        1
                         );
             return renderer;
         }
@@ -30,7 +31,8 @@ namespace WarpWriter.WarpWriter.View
                         xOffset + (x - y) * 2,
                         (x + y),
                         2, 2,
-                        color
+                        color,
+                        1
                         );
             return renderer;
         }
@@ -39,8 +41,8 @@ namespace WarpWriter.WarpWriter.View
         {
             for (int x = 0; x < indexes.Length; x++)
                 for (int y = 0; y < indexes[x].Length; y++)
-                    renderer.Rect(x * 2, x + y * 2, 1, 2, palette[indexes[x][y]])
-                            .Rect(x * 2 + 1, x + y * 2 + 1, 1, 2, palette[indexes[x][y]]);
+                    renderer.Rect(x * 2, x + y * 2, 1, 2, palette[indexes[x][y]], 1)
+                            .Rect(x * 2 + 1, x + y * 2 + 1, 1, 2, palette[indexes[x][y]], 1);
             return renderer;
         }
 
@@ -52,8 +54,8 @@ namespace WarpWriter.WarpWriter.View
                 {
                     uint color = palette[indexes[x][y]];
                     int y2 = (indexes[x].Length - 1 - y) * 2;
-                    renderer.Rect(x * 2, height - (x + y2), 1, 2, color)
-                            .Rect(x * 2 + 1, height - (x + y2) - 1, 1, 2, color);
+                    renderer.Rect(x * 2, height - (x + y2), 1, 2, color, 1)
+                            .Rect(x * 2 + 1, height - (x + y2) - 1, 1, 2, color, 1);
                 }
             return renderer;
         }

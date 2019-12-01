@@ -5,7 +5,7 @@
     /// </summary>
     public interface IRectangleRenderer<T> : IVoxelRenderer where T : IRectangleRenderer<T>
     {
-        T Rect(int x, int y, int sizeX, int sizeY, uint color);
+        T Rect(int x, int y, int sizeX, int sizeY, uint color, int depth);
 
         T RectVertical(int x, int y, int sizeX, int sizeY, byte voxel);
 
