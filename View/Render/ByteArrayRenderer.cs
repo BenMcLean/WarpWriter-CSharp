@@ -1,4 +1,5 @@
-﻿using WarpWriter.View.Color;
+﻿using System;
+using WarpWriter.View.Color;
 
 namespace WarpWriter.View.Render
 {
@@ -13,9 +14,9 @@ namespace WarpWriter.View.Render
         public int OffsetX { get; set; } = 0;
         public int OffsetY { get; set; } = 0;
         public byte[] Bytes { get; set; }
-        internal byte[] Working { get; set; }
+        internal uint[] Working { get; set; }
+        public uint[] Outlines { get; set; }
         public int[] Depths { get; set; }
-        public byte[] Outlines { get; set; }
         public uint Width { get; set; } = 0;
         public uint Height
         {
@@ -25,10 +26,10 @@ namespace WarpWriter.View.Render
             }
             set
             {
-                Bytes = new byte[Width * value * 4];
-                Working = new byte[Bytes.Length];
-                Outlines = new byte[Bytes.Length];
                 Depths = new int[Width * value];
+                Working = new uint[Depths.Length];
+                Outlines = new uint[Depths.Length];
+                Bytes = new byte[Depths.Length * 4];
             }
         }
 
@@ -39,18 +40,90 @@ namespace WarpWriter.View.Render
             {
                 uint start = (uint)((height - y - 1) * Width + x);
                 Depths[start] = depth;
-                start *= 4;
-                Working[start] = (byte)(color);
-                Working[start + 1] = (byte)(color >> 8);
-                Working[start + 2] = (byte)(color >> 16);
-                Working[start + 3] = Transparency;
-                Outlines[start] = (byte)(color >> 1 & 0x7F);
-                Outlines[start + 1] = (byte)(color >> 9 & 0x7F);
-                Outlines[start + 2] = (byte)(color >> 17 & 0x7F);
-                Outlines[start + 3] = Transparency;
+                Working[start] = color | (uint)Transparency << 24;
+                Outlines[start] = (color >> 1 & 0x7F7F7F) | (uint)Transparency << 24;
+
+                //start *= 4;
+                //Working[start] = (byte)(color);
+                //Working[start + 1] = (byte)(color >> 8);
+                //Working[start + 2] = (byte)(color >> 16);
+                //Working[start + 3] = Transparency;
+                //Outlines[start] = (byte)(color >> 1 & 0x7F);
+                //Outlines[start + 1] = (byte)(color >> 9 & 0x7F);
+                //Outlines[start + 2] = (byte)(color >> 17 & 0x7F);
+                //Outlines[start + 3] = Transparency;
             }
             return this;
         }
+
+        #region IBlittable
+        public byte[] Blit(int threshold, uint pixelWidth, uint pixelHeight)
+        {
+            uint xSize = Width - 1,
+                ySize = Height - 1,
+                o;
+            int depth;
+            for (uint y = Width * (ySize - 1); y >= Width; y--)
+            {
+                for (uint x = 1; x < xSize; x++)
+                {
+                    uint start = y + x;
+                    if ((o = Outlines[start]) != 0)
+                    {
+                        depth = Depths[start];
+                        if (Outlines[start - 1] == 0 && Outlines[start - Width] == 0)
+                        {
+                            Working[start - 1] = o;
+                            Working[start - Width] = o;
+                            Working[start] = o;
+                        }
+                        else if (Outlines[start + 1] == 0 && Outlines[start - Width] == 0)
+                        {
+                            Working[start + 1] = o;
+                            Working[start - Width] = o;
+                            Working[start] = o;
+                        }
+                        else if (Outlines[start - 1] == 0 && Outlines[start + Width] == 0)
+                        {
+                            Working[start - 1] = o;
+                            Working[start + Width] = o;
+                            Working[start] = o;
+                        }
+                        else if (Outlines[start + 1] == 0 && Outlines[start + Width] == 0)
+                        {
+                            Working[start + 1] = o;
+                            Working[start + Width] = o;
+                            Working[start] = o;
+                        }
+                        else
+                        {
+                            if (Outlines[start - 1] == 0 || Depths[start - 1] < depth - threshold)
+                            {
+                                Working[start - 1] = o;
+                            }
+                            if (Outlines[start + 1] == 0 || Depths[start + 1] < depth - threshold)
+                            {
+                                Working[start + 1] = o;
+                            }
+                            if (Outlines[start - Width] == 0 || Depths[start - Width] < depth - threshold)
+                            {
+                                Working[start - Width] = o;
+                            }
+                            if (Outlines[start + Width] == 0 || Depths[start + Width] < depth - threshold)
+                            {
+                                Working[start + Width] = o;
+                            }
+                        }
+                    }
+                }
+            }
+            Buffer.BlockCopy(Working, 0, Bytes, 0, Bytes.Length);
+            Array.Clear(Working, 0, Working.Length);
+            Array.Clear(Outlines, 0, Outlines.Length);
+            Array.Clear(Depths, 0, Depths.Length);
+            return Bytes;
+        }
+        #endregion
 
         #region IRectangleRenderer
         public ByteArrayRenderer Rect(int x, int y, int sizeX, int sizeY, uint color, int depth)

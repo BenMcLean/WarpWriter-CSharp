@@ -850,6 +850,7 @@ namespace WarpWriter.View
                     renderer.RectVertical(xPos, yPos + 2, 3, 3, v, dep, x, y, z);
                 }
             }
+            renderer.Blit(13, (uint)pixelWidth, (uint)pixelHeight);
         }
 
         public static T PixelCubeIso<T>(this T renderer, VoxelSeq seq) where T : ITriangleRenderer<T>
@@ -886,6 +887,7 @@ namespace WarpWriter.View
                     renderer.DrawRightTriangleVerticalFace((int)xPos + 2, (int)yPos + 4, v, (int)dep, (int)x, (int)y, (int)z);
                 }
             }
+            renderer.Blit(12, (uint)pixelWidth, (uint)pixelHeight);
         }
     }
 }
