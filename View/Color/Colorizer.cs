@@ -96,7 +96,7 @@ namespace WarpWriter.View.Color
             for (int i = 1; i < Count; i++)
             {
                 uint rev = reverse[i];
-                int y = (int)(rev & yLim), match = i, yBright = y * 9 / 2, yDim = y * 3, yDark = y, luma, warm, mild;
+                int y = (int)(rev & yLim), match = i, yBright = y * 11 / 3, yDim = y * 3, yDark = y, luma, warm, mild;
 
                 cwf = (cw = (int)cws[i] - 16) / 30f;
                 cmf = (cm = (int)cms[i] - 16) / 30f;
@@ -107,8 +107,8 @@ namespace WarpWriter.View.Color
                 luma = yDim;
                 //warm = ((cw * 395 + 31) / 32 - 192) / 16;
                 //mild = ((cm * 395 + 31) / 32 - 192) / 16;
-                warm = cw * 5 / 3;
-                mild = cm * 5 / 3;
+                warm = cw * 7 / 4;
+                mild = cm * 7 / 4;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
@@ -121,8 +121,8 @@ namespace WarpWriter.View.Color
                 luma = yBright;
                 //warm = ((cw * 333 + 31) / 32 - 162) / 16;
                 //mild = ((cm * 333 + 31) / 32 - 162) / 16;
-                warm = cw * 5 / 3;
-                mild = cm * 5 / 3;
+                warm = cw * 2;
+                mild = cm * 2;
                 r = (luma + warm * 5 - mild * 4);
                 g = (luma - warm * 3 + mild * 4);
                 b = (luma - warm * 3 - mild * 4);
