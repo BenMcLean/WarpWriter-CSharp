@@ -185,7 +185,7 @@ namespace WarpWriter.View.Color
 
         public byte RandomColorIndex(RNG random)
         {
-            return PaletteMapping[random.Next(15)];
+            return PaletteMapping[random.NextBits(15)];
         }
 
         /**
@@ -198,7 +198,7 @@ namespace WarpWriter.View.Color
          */
         public uint RandomColor(RNG random)
         {
-            return PaletteArray[PaletteMapping[random.Next(15)] & 255];
+            return PaletteArray[PaletteMapping[random.NextBits(15)] & 255];
         }
 
         /**
